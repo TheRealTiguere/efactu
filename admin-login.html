@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connexion Administration - eFactu</title>
+  <meta name="robots" content="noindex, nofollow" />
+  
+  <!-- CSS files -->
+  <link rel="stylesheet" href="/src/css/main.css" />
+  <link rel="stylesheet" href="/src/css/components.css" />
+  
+  <style>
+    body {
+      background: radial-gradient(circle at 10% 20%, var(--primary-deep) 0%, #030712 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 440px;
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-xl);
+      padding: 40px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .login-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    .login-logo svg {
+      width: 40px;
+      height: 40px;
+    }
+
+    .login-logo span {
+      color: white;
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .login-logo span span {
+      color: var(--accent);
+    }
+
+    .login-header h1 {
+      color: white;
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .login-header p {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+
+    .login-field {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .login-label {
+      display: block;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .login-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      color: white;
+      font-size: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .login-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+    }
+
+    .login-error {
+      background-color: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      display: none;
+      text-align: left;
+    }
+
+    .login-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 14px;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+    }
+
+    .login-btn:active {
+      transform: translateY(0);
+    }
+
+    .login-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    /* Shake animation for error */
+    .shake {
+      animation: shake 0.4s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container" id="login-card">
+    <div class="login-logo">
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="45" fill="#10B981" />
+        <path d="M35 50 L45 60 L65 40" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <span>e<span>Factu</span></span>
+    </div>
+
+    <div class="login-header">
+      <h1>Espace Administration</h1>
+      <p>Connectez-vous pour gérer les configurations du comparateur.</p>
+    </div>
+
+    <div class="login-error" id="login-err-msg">
+      ⚠️ Identifiants incorrects. Veuillez réessayer.
+    </div>
+
+    <form id="login-form" onsubmit="event.preventDefault();">
+      <div class="login-field">
+        <label class="login-label" for="l-email">Identifiant / Email</label>
+        <input type="email" id="l-email" class="login-input" placeholder="admin@efactu.fr" required value="admin@efactu.fr">
+      </div>
+
+      <div class="login-field" style="margin-bottom: 30px;">
+        <label class="login-label" for="l-pass">Mot de passe</label>
+        <input type="password" id="l-pass" class="login-input" placeholder="Saisissez votre mot de passe" required autofocus>
+      </div>
+
+      <button type="submit" class="login-btn" id="l-submit-btn">
+        Se connecter
+      </button>
+    </form>
+
+    <div style="margin-top: 30px; font-size: 13px;">
+      <a href="/index.html" style="color: rgba(255, 255, 255, 0.4); text-decoration: none;">← Retour au site public</a>
+    </div>
+  </div>
+
+  <script type="module">
+    // SHA-256 hash of password "admin"
+    const CORRECT_HASH = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918";
+    const CORRECT_EMAIL = "admin@efactu.fr";
+
+    async function sha256(message) {
+      const msgBuffer = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    const form = document.getElementById('login-form');
+    const card = document.getElementById('login-card');
+    const errDiv = document.getElementById('login-err-msg');
+    const submitBtn = document.getElementById('l-submit-btn');
+
+    form.addEventListener('submit', async () => {
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Vérification...";
+      errDiv.style.display = 'none';
+      card.classList.remove('shake');
+
+      const email = document.getElementById('l-email').value.trim();
+      const password = document.getElementById('l-pass').value;
+
+      const passwordHash = await sha256(password);
+
+      if (email === CORRECT_EMAIL && passwordHash === CORRECT_HASH) {
+        // Authenticated! Store token in sessionStorage
+        const token = 'efactu-session-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+        sessionStorage.setItem('efactu_admin_token', token);
+        
+        submitBtn.textContent = "Connexion réussie !";
+        submitBtn.style.background = "#10B981";
+        
+        setTimeout(() => {
+          window.location.href = '/admin.html';
+        }, 800);
+      } else {
+        // Fail
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Se connecter";
+        errDiv.style.display = 'block';
+        card.classList.add('shake');
+      }
+    });
+  </script>
+</body>
+</html>

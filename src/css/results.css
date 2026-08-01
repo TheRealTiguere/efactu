@@ -1,0 +1,334 @@
+/* Recommendations and Results Dashboard Styles */
+
+.q-container.results-mode {
+  max-width: 1000px;
+  transition: max-width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.results-dashboard {
+  animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Results Header */
+.results-header-box {
+  background-color: var(--primary-deep);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  color: var(--text-white);
+  text-align: center;
+  margin-bottom: 40px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.results-header-box h2 {
+  color: var(--text-white);
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.results-header-box p {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* User Selection Recap Badges */
+.results-recap-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.results-recap-tag {
+  background-color: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-white);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Platform Results List */
+.platform-results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 60px;
+}
+
+/* Results Cards */
+.platform-card {
+  background-color: var(--bg-card);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid #e2e8f0;
+  padding: 32px;
+  transition: var(--transition-normal);
+  position: relative;
+  display: grid;
+  grid-template-columns: 180px 1fr 180px;
+  gap: 24px;
+}
+
+.platform-card:hover {
+  box-shadow: var(--shadow-premium);
+  border-color: #cbd5e1;
+}
+
+.platform-card.recommended-card {
+  border: 2px solid var(--accent);
+  box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.15);
+}
+
+.recommended-ribbon {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 5;
+}
+
+@media (max-width: 992px) {
+  .platform-card {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 24px;
+  }
+}
+
+/* Platform Column 1: Info & Logo */
+.platform-col-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.platform-logo-svg {
+  width: 90px;
+  height: 90px;
+  margin-bottom: 16px;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05));
+}
+
+.platform-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--primary-deep);
+  line-height: 1.3;
+}
+
+/* Platform Column 2: Content Breakdown */
+.platform-col-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.platform-description {
+  font-size: 15px;
+  color: var(--text-main);
+  margin-bottom: 20px;
+}
+
+/* Pros and Cons list */
+.platform-pros-cons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 600px) {
+  .platform-pros-cons {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+.pro-con-item {
+  font-size: 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.4;
+}
+
+.pro-item {
+  color: var(--text-main);
+}
+.pro-item svg {
+  color: var(--status-success);
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.con-item {
+  color: var(--text-muted);
+}
+.con-item svg {
+  color: var(--status-danger);
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* Platform Column 3: Score and Price */
+.platform-col-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-left: 1px solid #f1f5f9;
+  padding-left: 24px;
+  text-align: center;
+}
+
+@media (max-width: 992px) {
+  .platform-col-actions {
+    border-left: none;
+    border-top: 1px solid #f1f5f9;
+    padding-left: 0;
+    padding-top: 24px;
+  }
+}
+
+.platform-score-wrapper {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.platform-score-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: var(--bg-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 800;
+  position: relative;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+}
+
+.platform-score-circle.score-high {
+  color: var(--status-success);
+  border: 4px solid var(--status-success);
+}
+.platform-score-circle.score-medium {
+  color: var(--status-warning);
+  border: 4px solid var(--status-warning);
+}
+.platform-score-circle.score-low {
+  color: var(--text-muted);
+  border: 4px solid #cbd5e1;
+}
+
+.platform-score-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-top: 8px;
+  text-transform: uppercase;
+}
+
+.platform-price-label {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin-bottom: 16px;
+}
+
+/* Accordion for details */
+.platform-accordion-trigger {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent-dark);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 8px 0;
+  width: fit-content;
+  user-select: none;
+}
+
+.platform-accordion-trigger svg {
+  transition: transform 0.25s ease;
+}
+
+.platform-accordion-trigger.active svg {
+  transform: rotate(180deg);
+}
+
+.platform-accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+/* Custom Visual Check Grid inside Accordion */
+.features-check-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  border-top: 1px dashed #e2e8f0;
+  padding-top: 16px;
+  margin-top: 12px;
+}
+
+@media (max-width: 768px) {
+  .features-check-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 500px) {
+  .features-check-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.check-item {
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.check-item svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+.check-item.active {
+  color: var(--text-dark);
+}
+.check-item.active svg {
+  color: var(--status-success);
+}
+.check-item.inactive {
+  color: var(--text-light);
+}
+.check-item.inactive svg {
+  color: var(--text-light);
+}

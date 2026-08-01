@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comment ça fonctionne ? - eFactu</title>
+  <meta name="description" content="Découvrez le fonctionnement du comparateur eFactu et le calendrier officiel de la réforme de la facturation électronique 2026/2027 en France." />
+  
+  <!-- CSS files -->
+  <link rel="stylesheet" href="/src/css/main.css" />
+  <link rel="stylesheet" href="/src/css/components.css" />
+  <link rel="stylesheet" href="/src/css/pages.css" />
+  
+  <!-- Breadcrumb Schema -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Accueil",
+          "item": "https://efactu.fr/index.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Comment ça fonctionne",
+          "item": "https://efactu.fr/comment-ca-marche.html"
+        }
+      ]
+    }
+  </script>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <a href="/index.html" class="logo" id="header-logo">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="45" fill="url(#logoGrad)" />
+          <path d="M35 50 L45 60 L65 40" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+          <defs>
+            <linearGradient id="logoGrad" x1="5" y1="5" x2="95" y2="95" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#10B981" />
+              <stop offset="100%" stop-color="#0B132B" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="logo-text">e<span>Factu</span></div>
+      </a>
+      
+      <nav class="nav">
+        <a href="/index.html" class="nav-link">Accueil</a>
+        <a href="/comment-ca-marche.html" class="nav-link">Comment ça fonctionne</a>
+        <a href="/comparatif.html" class="nav-link">Comparatif</a>
+        <a href="/guides/index.html" class="nav-link">Guides Réforme</a>
+        <a href="/faq.html" class="nav-link">FAQ</a>
+        <a href="/contact.html" class="nav-link">Contact</a>
+      </nav>
+      
+      <div class="header-actions">
+        <a href="/index.html#comparator" class="btn btn-primary btn-sm">Comparer les plateformes</a>
+        <div class="burger-menu" aria-label="Menu Mobile" role="button">
+          <span class="burger-bar"></span>
+          <span class="burger-bar"></span>
+          <span class="burger-bar"></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Title Hero -->
+  <section class="section page-hero">
+    <div class="container">
+      <h1>Comment ça fonctionne ?</h1>
+      <p style="color: rgba(255, 255, 255, 0.8); max-width: 600px; margin: 0 auto;">Découvrez les coulisses de notre outil de comparaison et préparez votre entreprise aux nouvelles obligations légales.</p>
+    </div>
+  </section>
+
+  <!-- La facture électronique en 5 minutes Section -->
+  <section class="five-mins-section">
+    <div class="container">
+      <div class="five-mins-grid">
+        <div class="five-mins-left">
+          <h1 style="color: #0d9488; font-weight: 900;">La facture électronique en 5 minutes</h1>
+          
+          <h2>Qu'est-ce qu'une facture électronique ?</h2>
+          <p>Bien plus qu'une simple version numérique de vos factures papier, <strong>une facture électronique</strong> est un document structuré, créé, envoyé et reçu dans un format électronique. <strong>Son traitement est entièrement automatisé</strong>. Elle contient toutes les informations obligatoires, au même titre que les factures traditionnelles, et bénéficie d'une validité officielle.</p>
+          
+          <h2>Les objectifs</h2>
+          <ul>
+            <li><strong>Renforcer la compétitivité</strong> des entreprises avec une moindre charge administrative et augmenter la productivité grâce à la dématérialisation.</li>
+            <li><strong>Simplifier les obligations déclaratives</strong> en matière de TVA à long terme en pré-remplissant les déclarations.</li>
+            <li><strong>Améliorer la lutte contre la fraude</strong> et favoriser une concurrence saine entre entreprises.</li>
+            <li><strong>Permettre une meilleure connaissance</strong> en temps réel de l'activité des entreprises.</li>
+          </ul>
+          
+          <h2>Le calendrier</h2>
+          <p>Le <strong>1er septembre 2026</strong>, toutes les entreprises françaises assujetties à la TVA, quelle que soit leur taille, devront être en mesure de recevoir leurs factures au format électronique. À la même date, les entreprises de taille intermédiaire et les grandes entreprises devront aussi être capables d'émettre leurs factures au format électronique. Les <strong>TPE et PME</strong> bénéficieront d'un délai supplémentaire <strong>jusqu'au 1er septembre 2027</strong>.</p>
+        </div>
+        
+        <div class="five-mins-right">
+          <div class="visual-timeline-container">
+            <div class="visual-timeline-badge">QUAND ?</div>
+            
+            <div class="visual-timeline-illustration">
+              <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%;">
+                <!-- Yellow Clock -->
+                <circle cx="160" cy="50" r="18" fill="#fef08a" stroke="#ca8a04" stroke-width="2"/>
+                <path d="M160 50 V38 M160 50 L168 53" stroke="#ca8a04" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="160" cy="50" r="2.5" fill="#ca8a04"/>
+                <!-- Woman -->
+                <circle cx="105" cy="55" r="11" fill="#ffedd5"/>
+                <path d="M92 55 C92 42 118 42 118 55 C118 50 96 50 92 55 Z" fill="#1e293b"/>
+                <path d="M85 85 C85 70 125 70 125 85 V150 H85 Z" fill="#0d9488"/>
+                <path d="M90 85 L145 50" stroke="#ffedd5" stroke-width="5" stroke-linecap="round"/>
+                <path d="M120 90 L135 110 L115 115" stroke="#ffedd5" stroke-width="5" stroke-linecap="round"/>
+                <path d="M110 115 H150 L155 125 H105 Z" fill="#e2e8f0"/>
+              </svg>
+            </div>
+            
+            <div class="visual-timeline-card-wrapper">
+              <div class="visual-timeline-card">
+                <div class="visual-timeline-card-date date-2026">
+                  <span class="date-day">01/09</span>
+                  <span class="date-year">2026</span>
+                </div>
+                <div class="visual-timeline-card-text">
+                  <div class="visual-timeline-card-title title-2026" style="color: #0f172a; font-weight: 800;">
+                    OBLIGATION DE RÉCEPTION POUR TOUTES LES ENTREPRISES ET ÉMISSION POUR LES GE/ETI
+                  </div>
+                  <div class="visual-timeline-card-desc">
+                    Recevez et émettez vos factures électroniques entre assujettis TVA (e-invoicing) avec la plateforme de votre choix. Déclarez la synthèse ou le détail des ventes aux particuliers ou à l'export (e-reporting).
+                  </div>
+                </div>
+              </div>
+              
+              <div class="visual-timeline-card">
+                <div class="visual-timeline-card-date date-2027">
+                  <span class="date-day">01/09</span>
+                  <span class="date-year">2027</span>
+                </div>
+                <div class="visual-timeline-card-text">
+                  <div class="visual-timeline-card-title title-2027" style="color: #0f172a; font-weight: 800;">
+                    GÉNÉRALISATION DE L'ÉMISSION POUR TOUTES LES ENTREPRISES (INCLUS TPE/PME)
+                  </div>
+                  <div class="visual-timeline-card-desc">
+                    Obligation d'émission de factures dématérialisées pour toutes les entreprises de taille moyenne, petite ou micro (TPE/PME).
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .five-mins-section {
+      padding: 60px 0;
+      background-color: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .five-mins-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 60px;
+      align-items: center;
+    }
+    @media (max-width: 992px) {
+      .five-mins-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+    }
+    .five-mins-left h2 {
+      font-size: 20px;
+      font-weight: 800;
+      color: #0d9488;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+    .five-mins-left p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #475569;
+    }
+    .five-mins-left ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .five-mins-left li {
+      position: relative;
+      padding-left: 24px;
+      margin-bottom: 12px;
+      font-size: 15px;
+      line-height: 1.6;
+      color: #475569;
+    }
+    .five-mins-left li::before {
+      content: "•";
+      position: absolute;
+      left: 8px;
+      color: #10b981;
+      font-weight: bold;
+      font-size: 20px;
+      top: -2px;
+    }
+    
+    .five-mins-right {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .visual-timeline-container {
+      position: relative;
+      width: 100%;
+      max-width: 440px;
+      background-color: #0f766e;
+      border-radius: 50%;
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+      box-shadow: 0 20px 40px -15px rgba(15, 118, 110, 0.4);
+    }
+    .visual-timeline-badge {
+      position: absolute;
+      top: 5%;
+      left: 5%;
+      background-color: #f59e0b;
+      color: #ffffff;
+      font-weight: 900;
+      font-size: 14px;
+      padding: 6px 14px;
+      border-radius: 4px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      transform: rotate(-6deg);
+      z-index: 10;
+      letter-spacing: 1px;
+    }
+    .visual-timeline-illustration {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      width: 120px;
+      height: 120px;
+      z-index: 5;
+    }
+    .visual-timeline-card-wrapper {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      z-index: 8;
+    }
+    .visual-timeline-card {
+      background-color: #ffffff;
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15);
+    }
+    .visual-timeline-card-date {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-width: 60px;
+      height: 60px;
+      border-radius: 6px;
+      font-weight: 800;
+      text-align: center;
+      padding: 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .date-2026 {
+      background-color: #fef08a;
+      color: #ca8a04;
+      border: 1px solid #fef08a;
+    }
+    .date-2027 {
+      background-color: #042f2e;
+      color: #ffffff;
+    }
+    .date-day {
+      font-size: 15px;
+      line-height: 1.1;
+    }
+    .date-year {
+      font-size: 11px;
+      font-weight: 900;
+    }
+    .visual-timeline-card-text {
+      flex: 1;
+    }
+    .visual-timeline-card-title {
+      font-size: 10.5px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      letter-spacing: 0.3px;
+      line-height: 1.3;
+      color: #1e293b;
+    }
+    .visual-timeline-card-desc {
+      font-size: 9.5px;
+      color: #64748b;
+      line-height: 1.45;
+    }
+  </style>
+
+  <!-- 3 Steps Process (Adapted from Agiris #accompagnement) -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header text-center" style="max-width: 800px; margin: 0 auto 48px;">
+        <h2>Préparez votre transition en 3 étapes clés</h2>
+        <p>La réforme de la facture électronique va modifier en profondeur le contrôle et la circulation de vos flux. Or, près de 61% des dirigeants de TPE/PME ne mesurent pas encore précisément ses impacts. Pour vous éviter de vous poser mille questions, <strong>eFactu</strong> vous guide à travers 3 étapes de préparation :</p>
+      </div>
+
+      <div class="process-steps">
+        <div class="process-step-card" style="border-top: 4px solid var(--primary);">
+          <div class="process-step-num">1</div>
+          <h3>Comprendre</h3>
+          <p>Analysez les impacts de la réforme sur votre entreprise en fonction de votre statut juridique, de la nature de vos transactions (B2B, B2C, B2G) et des volumes de factures d'achat et de vente échangés annuellement.</p>
+        </div>
+        
+        <div class="process-step-card" style="border-top: 4px solid var(--secondary);">
+          <div class="process-step-num">2</div>
+          <h3>Auditer</h3>
+          <p>Faites le point sur votre système d'information actuel : vos outils de facturation, de caisse et de comptabilité sont-ils compatibles avec les formats Factur-X, UBL ou CII ? Vos modes d'archivage respectent-ils les obligations de conservation légale ?</p>
+        </div>
+        
+        <div class="process-step-card" style="border-top: 4px solid var(--accent-dark);">
+          <div class="process-step-num">3</div>
+          <h3>Mettre à jour</h3>
+          <p>Nettoyez et remettez à jour vos fichiers tiers (clients et fournisseurs). Renseignez systématiquement les informations de routage clés exigées par l'annuaire de l'État : numéro SIREN/SIRET et numéro de TVA intracommunautaire.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Obligations & E-Invoicing Section -->
+  <section class="section" style="background-color: #ffffff; border-top: 1px solid #e2e8f0; padding: 80px 0;">
+    <div class="container">
+      <div class="five-mins-grid">
+        <div class="five-mins-left">
+          <h1 style="color: #0b132b; font-size: 36px; font-weight: 900; margin-bottom: 30px; line-height: 1.2;">Facture électronique : Les obligations</h1>
+          
+          <h3 style="color: #0d9488; font-weight: 800; font-size: 19px; margin-top: 24px; margin-bottom: 8px;">La gestion des statuts des factures</h3>
+          <p style="font-size: 14.5px; color: #475569; line-height: 1.6; margin-bottom: 20px;">
+            La réforme doit permettre aux entreprises de <strong>suivre le parcours complet des factures</strong>, de leur émission jusqu'à leur règlement. La transmission et la mise à jour des statuts des factures sont donc cruciales pour offrir une vision partagée de leur cycle de vie, et pour mettre en place des processus automatisés de gestion des rejets et des annulations. Quatre statuts sont obligatoires : déposée, rejetée, encaissée et refusée. D'autres : émise par la plateforme, mise à disposition ou prise en charge, sont facultatifs.
+          </p>
+
+          <h3 style="color: #0d9488; font-weight: 800; font-size: 19px; margin-top: 24px; margin-bottom: 8px;">Le e-invoicing</h3>
+          <p style="font-size: 14.5px; color: #475569; line-height: 1.6; margin-bottom: 20px;">
+            C'est l'obligation d'émettre, transmettre et recevoir des factures dans un <strong>format standardisé via les plateformes agréées</strong>. Concrètement, c'est la fin des factures au format papier et PDF simple pour toutes les transactions BtoB.
+          </p>
+
+          <h3 style="color: #0d9488; font-weight: 800; font-size: 19px; margin-top: 24px; margin-bottom: 8px;">Le e-reporting</h3>
+          <p style="font-size: 14.5px; color: #475569; line-height: 1.6; margin-bottom: 30px;">
+            C'est la communication à l'administration fiscale des <strong>données de transaction qui ne sont pas couvertes par l'e-Invoicing</strong> : transactions avec des particuliers ou des entreprises étrangères, les acquisitions intracommunautaires et les encaissements de prestations de services.
+          </p>
+
+          <a href="/guides/guide-reforme.html" class="btn btn-primary" style="background-color: #0d9488; border-color: #0d9488; font-weight: 800; padding: 12px 24px;">Voir notre dossier complet sur l'e-reporting</a>
+        </div>
+
+        <div class="five-mins-right">
+          <!-- B2B Invoicing Diagram -->
+          <div style="width: 100%; max-width: 480px; background-color: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+            <div style="text-align: center; margin-bottom: 20px;">
+              <h4 style="font-size: 18px; font-weight: 900; color: #0b132b; margin: 0;">E-INVOICING</h4>
+              <p style="font-size: 12px; color: #64748b; margin: 4px 0 0;">La nouvelle circulation contrôlée des factures BtoB en France</p>
+            </div>
+            
+            <svg viewBox="0 0 400 320" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;">
+              <!-- Buildings (Enterprise A & B) -->
+              <!-- Enterprise A -->
+              <rect x="20" y="30" width="40" height="30" rx="4" fill="#0d9488"/>
+              <rect x="30" y="20" width="20" height="10" fill="#0d9488"/>
+              <rect x="28" y="36" width="6" height="8" fill="#ffffff"/>
+              <rect x="46" y="36" width="6" height="8" fill="#ffffff"/>
+              <text x="40" y="75" fill="#475569" font-family="system-ui" font-size="10" font-weight="bold" text-anchor="middle">ENTREPRISE A</text>
+              <text x="40" y="87" fill="#64748b" font-family="system-ui" font-size="9" text-anchor="middle">Émetteur</text>
+
+              <!-- Enterprise B -->
+              <rect x="340" y="30" width="40" height="30" rx="4" fill="#0d9488"/>
+              <rect x="350" y="20" width="20" height="10" fill="#0d9488"/>
+              <rect x="348" y="36" width="6" height="8" fill="#ffffff"/>
+              <rect x="366" y="36" width="6" height="8" fill="#ffffff"/>
+              <text x="360" y="75" fill="#475569" font-family="system-ui" font-size="10" font-weight="bold" text-anchor="middle">ENTREPRISE B</text>
+              <text x="360" y="87" fill="#64748b" font-family="system-ui" font-size="9" text-anchor="middle">Destinataire</text>
+
+              <!-- Platform Boxes -->
+              <!-- Platform A -->
+              <rect x="15" y="140" width="130" height="50" rx="8" fill="#0d9488"/>
+              <text x="80" y="160" fill="#ffffff" font-family="system-ui" font-size="10" font-weight="bold" text-anchor="middle">Plateforme Agréée</text>
+              <text x="80" y="172" fill="#ffffff" font-family="system-ui" font-size="10" text-anchor="middle">choisie par</text>
+              <text x="80" y="184" fill="#ffffff" font-family="system-ui" font-size="10" font-weight="bold" text-anchor="middle">l'entreprise A</text>
+
+              <!-- Platform B -->
+              <rect x="255" y="140" width="130" height="50" rx="8" fill="#0b132b"/>
+              <text x="320" y="160" fill="#ffffff" font-family="system-ui" font-size="10" font-weight="bold" text-anchor="middle">Plateforme Agréée</text>
+              <text x="320" y="172" fill="#ffffff" font-family="system-ui" font-size="10" text-anchor="middle">choisie par</text>
+              <text x="320" y="184" fill="#ffffff" font-family="system-ui" font-size="10" font-weight="bold" text-anchor="middle">l'entreprise B</text>
+
+              <!-- Vertical Arrows (Enterprise <-> Platform) -->
+              <!-- Ent A -> Plat A -->
+              <path d="M48 98 V132 M48 132 L44 126 M48 132 L52 126" stroke="#64748b" stroke-width="1.5" stroke-dasharray="3 3"/>
+              <path d="M68 132 V98 M68 98 L64 104 M68 98 L72 104" stroke="#0d9488" stroke-width="1.5" stroke-dasharray="3 3"/>
+
+              <!-- Ent B -> Plat B -->
+              <path d="M332 98 V132 M332 132 L328 126 M332 132 L336 126" stroke="#0d9488" stroke-width="1.5" stroke-dasharray="3 3"/>
+              <path d="M352 132 V98 M352 98 L348 104 M352 98 L356 104" stroke="#64748b" stroke-width="1.5" stroke-dasharray="3 3"/>
+
+              <!-- Horizontal Arrow (Plat A -> Plat B) -->
+              <path d="M152 165 H248 M248 165 L240 161 M248 165 L240 169" stroke="#0d9488" stroke-width="2" stroke-dasharray="4 4"/>
+              <text x="200" y="150" fill="#475569" font-family="system-ui" font-size="9" font-weight="bold" text-anchor="middle">4. Transfert</text>
+              <text x="200" y="160" fill="#475569" font-family="system-ui" font-size="9" text-anchor="middle">de la facture</text>
+              <text x="200" y="170" fill="#475569" font-family="system-ui" font-size="9" text-anchor="middle">originale</text>
+
+              <!-- Directory / Annex -->
+              <circle cx="200" cy="270" r="16" fill="#e2e8f0"/>
+              <path d="M192 264 H208 M192 270 H208 M192 276 H208" stroke="#475569" stroke-width="2"/>
+              <text x="200" y="298" fill="#0d9488" font-family="system-ui" font-size="9" font-weight="bold" text-anchor="middle">2. Identification</text>
+              <text x="200" y="308" fill="#0d9488" font-family="system-ui" font-size="9" text-anchor="middle">annuaire national</text>
+
+              <!-- Arrow Plat A -> Directory -->
+              <path d="M100 196 V250 H180 M180 250 L174 246 M180 250 L174 254" stroke="#64748b" stroke-width="1.5" stroke-dasharray="3 3"/>
+              <text x="75" y="220" fill="#64748b" font-family="system-ui" font-size="9" font-weight="bold" text-anchor="middle">1. Contrôle de</text>
+              <text x="75" y="230" fill="#64748b" font-family="system-ui" font-size="9" text-anchor="middle">conformité</text>
+
+              <!-- DGFiP / Taxes boxes -->
+              <rect x="150" y="215" width="20" height="15" fill="#ef4444"/>
+              <rect x="230" y="215" width="20" height="15" fill="#1d4ed8"/>
+              <text x="200" y="210" fill="#475569" font-family="system-ui" font-size="9" font-weight="bold" text-anchor="middle">3. Extraction</text>
+              <text x="200" y="220" fill="#475569" font-family="system-ui" font-size="9" text-anchor="middle">des données</text>
+              <text x="200" y="230" fill="#475569" font-family="system-ui" font-size="9" text-anchor="middle">pour la DGFiP</text>
+
+              <!-- Arrows Plat A / B -> DGFiP -->
+              <path d="M125 196 V222 H146 M146 222 L140 219 M146 222 L140 225" stroke="#64748b" stroke-width="1.2" stroke-dasharray="3 3"/>
+              <path d="M275 196 V222 H254 M254 222 L260 219 M254 222 L260 225" stroke="#64748b" stroke-width="1.2" stroke-dasharray="3 3"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Regulatory Mentions, Sanctions and Formats Section -->
+  <section class="section" style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; padding: 80px 0;">
+    <div class="container">
+      <div class="grid-3">
+        <!-- Mentions Obligatoires -->
+        <div style="background-color: #f0f9f8; border-radius: var(--radius-lg); border: 1px solid #ccfbf1; padding: 32px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+          <div>
+            <h3 style="font-size: 20px; font-weight: 800; color: #0d9488; margin-top: 0; margin-bottom: 16px; text-align: center;">Les mentions obligatoires</h3>
+            <p style="font-size: 14px; color: #475569; line-height: 1.6; margin-bottom: 16px;">
+              Quatre nouvelles mentions deviennent obligatoires sur les factures électroniques :
+            </p>
+            <ul style="padding-left: 20px; font-size: 14px; color: #475569; line-height: 1.6; list-style-type: circle;">
+              <li style="margin-bottom: 8px;"><strong>SIREN ou SIRET</strong> de l'émetteur et du destinataire</li>
+              <li style="margin-bottom: 8px;"><strong>Adresse de livraison</strong>, si différente de l'adresse de facturation</li>
+              <li style="margin-bottom: 8px;"><strong>Nature de l'opération</strong>, livraison de biens, prestation de services ou les deux</li>
+              <li style="margin-bottom: 8px;">Option pour le <strong>paiement de la TVA</strong> d'après les débits, le cas échéant</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Sanctions -->
+        <div style="background-color: #f0f9f8; border-radius: var(--radius-lg); border: 1px solid #ccfbf1; padding: 32px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+          <div>
+            <h3 style="font-size: 20px; font-weight: 800; color: #0d9488; margin-top: 0; margin-bottom: 16px; text-align: center;">Les sanctions</h3>
+            <p style="font-size: 14px; color: #475569; line-height: 1.6; margin-bottom: 16px;">
+              La loi de finances 2026 a durci les sanctions prévues en cas de non-respect du cadre de la réforme :
+            </p>
+            <ul style="padding-left: 20px; font-size: 14px; color: #475569; line-height: 1.6; list-style-type: circle;">
+              <li style="margin-bottom: 8px;"><strong>50 € par facture</strong> non émise au format électronique (plafonné à 15 000 € / an)</li>
+              <li style="margin-bottom: 8px;"><strong>500 € par transmission</strong> e-reporting manquante (plafonné à 15 000 € / an)</li>
+              <li style="margin-bottom: 8px;"><strong>500 € puis 1 000 €</strong> par trimestre en cas de non désignation d'une Plateforme Agréée</li>
+            </ul>
+          </div>
+          <p style="font-size: 12px; color: #64748b; margin-top: 20px; font-style: italic; line-height: 1.5;">
+            Ces sanctions peuvent rapidement s'accumuler compte tenu du volume de factures traitées par les entreprises.
+          </p>
+        </div>
+
+        <!-- Formats -->
+        <div style="background-color: #f0f9f8; border-radius: var(--radius-lg); border: 1px solid #ccfbf1; padding: 32px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+          <div>
+            <h3 style="font-size: 20px; font-weight: 800; color: #0d9488; margin-top: 0; margin-bottom: 16px; text-align: center;">Le format d'une facture électronique</h3>
+            <p style="font-size: 14px; color: #475569; line-height: 1.6; margin-bottom: 16px;">
+              Trois principaux formats de factures électroniques sont reconnus :
+            </p>
+            <ul style="padding-left: 20px; font-size: 14px; color: #475569; line-height: 1.6; list-style-type: circle; margin-bottom: 20px;">
+              <li style="margin-bottom: 8px; font-weight: 800;">FACTUR-X</li>
+              <li style="margin-bottom: 8px; font-weight: 800;">UBL</li>
+              <li style="margin-bottom: 8px; font-weight: 800;">CII</li>
+            </ul>
+          </div>
+          <p style="font-size: 13px; color: #64748b; border-top: 1px dashed #ccfbf1; padding-top: 16px; line-height: 1.5; margin: 0;">
+            Le format <strong>FACTUR-X</strong>, recommandé pour sa simplicité, combine un fichier PDF lisible par l'humain et un fichier XML lisible par la machine.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Features Section (Adapted from Agiris 'Tout en 1') -->
+  <section class="section" style="background-color: #ffffff; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;">
+    <div class="container">
+      <div class="section-header text-center" style="max-width: 800px; margin: 0 auto 48px;">
+        <h2 style="font-size: 28px; font-weight: 800; color: var(--text-color); margin-bottom: 16px;">De la théorie à la pratique : les 4 flux clés d'une plateforme</h2>
+        <p style="color: var(--text-muted); font-size: 16px;">Pour générer de réels gains de productivité, une plateforme de dématérialisation partenaire (PDP) doit automatiser l'intégralité du cycle de facturation :</p>
+      </div>
+
+      <div class="grid-2">
+        <div style="background: #f8fafc; padding: 32px; border-radius: var(--radius-lg); border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: flex-start;">
+          <h3 style="font-size: 20px; font-weight: 800; color: var(--text-color); margin-bottom: 12px; display: flex; align-items: center; gap: 12px;">
+            <span style="background: var(--primary-light); color: var(--primary); padding: 8px; border-radius: 8px; font-size: 16px;">📤</span>
+            1. Émission réglementaire (Factur-X)
+          </h3>
+          <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">Générez vos factures de vente directement dans l'un des formats conformes exigés par l'administration fiscale française, principalement le format **Factur-X** (qui embarque les données structurées XML dans un PDF visuel).</p>
+        </div>
+
+        <div style="background: #f8fafc; padding: 32px; border-radius: var(--radius-lg); border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: flex-start;">
+          <h3 style="font-size: 20px; font-weight: 800; color: var(--text-color); margin-bottom: 12px; display: flex; align-items: center; gap: 12px;">
+            <span style="background: var(--secondary-light); color: var(--secondary); padding: 8px; border-radius: 8px; font-size: 16px;">🔄</span>
+            2. Gestion en temps réel des statuts
+          </h3>
+          <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">Suivez le cycle de vie obligatoire de chaque facture émise. Le système notifie instantanément les statuts réglementaires : **« Déposée »**, **« Rejetée »**, **« Refusée »** (par le client), et **« Encaissée »**.</p>
+        </div>
+
+        <div style="background: #f8fafc; padding: 32px; border-radius: var(--radius-lg); border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: flex-start;">
+          <h3 style="font-size: 20px; font-weight: 800; color: var(--text-color); margin-bottom: 12px; display: flex; align-items: center; gap: 12px;">
+            <span style="background: var(--accent-light); color: var(--accent-dark); padding: 8px; border-radius: 8px; font-size: 16px;">📥</span>
+            3. Collecte et Import des achats
+          </h3>
+          <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">Récupérez automatiquement vos factures d'achat auprès des plateformes de vos fournisseurs ou via l'annuaire central de l'État, éliminant la ressaisie manuelle et le risque de perte de pièces justificatives.</p>
+        </div>
+
+        <div style="background: #f8fafc; padding: 32px; border-radius: var(--radius-lg); border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: flex-start;">
+          <h3 style="font-size: 20px; font-weight: 800; color: var(--text-color); margin-bottom: 12px; display: flex; align-items: center; gap: 12px;">
+            <span style="background: #e2e8f0; color: var(--text-muted); padding: 8px; border-radius: 8px; font-size: 16px;">💻</span>
+            4. Intégration comptable directe
+          </h3>
+          <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">Une fois validées sur la plateforme, les données d'achats et de ventes sont automatiquement synchronisées avec votre logiciel de comptabilité ou transmises à votre expert-comptable pour un traitement sans couture.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonial Section (Adapted from Agiris Mme David quote) -->
+  <section class="section" style="background-color: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+    <div class="container" style="max-width: 900px; text-align: center;">
+      <div style="font-size: 48px; color: var(--primary); opacity: 0.3; line-height: 1; margin-bottom: -10px;">“</div>
+      <blockquote style="font-size: 18px; font-style: italic; color: var(--text-color); line-height: 1.8; margin-bottom: 24px; font-weight: 500;">
+        « C'est un réel gain de temps au quotidien : plus de papier et plus besoin de se déplacer à La Poste. On appréhendait beaucoup la réforme car on pensait se rajouter du travail inutile, mais une fois l'habitude prise, le transfert se fait tout seul. Je suis rassurée d'avoir anticipé et de savoir que notre entreprise est déjà prête. »
+      </blockquote>
+      <div style="display: flex; align-items: center; justify-content: center; gap: 16px;">
+        <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--secondary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px;">
+          MD
+        </div>
+        <div style="text-align: left;">
+          <h4 style="font-size: 16px; font-weight: 800; margin: 0; color: var(--text-color);">Madame David</h4>
+          <p style="font-size: 13px; color: var(--text-muted); margin: 0;">Dirigeante de l'entreprise ETA Gauquelin (utilisatrice pilote)</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Box -->
+  <section class="section section-bg-white">
+    <div class="container text-center">
+      <div class="article-cta-box" style="margin-top: 0;">
+        <h3 style="font-size: 24px; font-weight: 800; margin-bottom: 12px;">Anticipez la réforme dès aujourd'hui</h3>
+        <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 24px;">Prenez 2 minutes pour découvrir la plateforme PDP de confiance la plus adaptée à votre entreprise.</p>
+        <a href="/index.html#comparator" class="btn btn-primary">Lancer le comparateur gratuit</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo">
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 28px; height: 28px;">
+              <circle cx="50" cy="50" r="45" fill="#10B981" />
+              <path d="M35 50 L45 60 L65 40" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span style="color: white;">e<span style="color: var(--accent);">Factu</span></span>
+          </div>
+          <p>Le comparateur indépendant de référence pour trouver votre plateforme de facturation électronique obligatoire (PDP/PAFE) en France.</p>
+        </div>
+        
+        <div>
+          <h3>Navigation</h3>
+          <ul class="footer-links">
+            <li><a href="/index.html">Accueil</a></li>
+            <li><a href="/comment-ca-marche.html">Comment ça marche</a></li>
+            <li><a href="/comparatif.html">Tableau Comparatif</a></li>
+            <li><a href="/guides/index.html">Guides Réforme</a></li>
+            <li><a href="/faq.html">FAQ</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h3>Légal</h3>
+          <ul class="footer-links">
+            <li><a href="/mentions-legales.html">Mentions Légales</a></li>
+            <li><a href="/politique-confidentialite.html">Confidentialité</a></li>
+            <li><a href="/contact.html">Nous Contacter</a></li>
+            <li><a href="/admin.html">Administration</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-contact">
+          <h3>Contact</h3>
+          <p>
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            contact@efactu.fr
+          </p>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>&copy; 2026 eFactu. Tous droits réservés.</p>
+        <div class="footer-legal-links">
+          <a href="/mentions-legales.html">Mentions légales</a>
+          <a href="/politique-confidentialite.html">Protection des données</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script type="module" src="/src/js/main.js"></script>
+</body>
+</html>

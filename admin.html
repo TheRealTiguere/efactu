@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Console d'Administration - eFactu</title>
+  <meta name="robots" content="noindex, nofollow" />
+  
+  <!-- Admin Guard (Must load first to prevent content flash) -->
+  <script>
+    (function() {
+      const token = sessionStorage.getItem('efactu_admin_token');
+      if (!token) {
+        document.documentElement.style.display = 'none';
+        window.location.replace('/admin-login.html');
+      }
+    })();
+  </script>
+  
+  <!-- CSS files -->
+  <link rel="stylesheet" href="/src/css/main.css" />
+  <link rel="stylesheet" href="/src/css/components.css" />
+  <link rel="stylesheet" href="/src/css/admin.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <a href="/index.html" class="logo" id="header-logo">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="45" fill="url(#logoGrad)" />
+          <path d="M35 50 L45 60 L65 40" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+          <defs>
+            <linearGradient id="logoGrad" x1="5" y1="5" x2="95" y2="95" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#10B981" />
+              <stop offset="100%" stop-color="#0B132B" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="logo-text">e<span>Factu</span> <span style="font-size: 12px; vertical-align: middle; background-color: var(--accent); color: white; padding: 2px 8px; border-radius: var(--radius-sm); margin-left: 8px;">ADMIN</span></div>
+      </a>
+      
+      <nav class="nav">
+        <a href="/index.html" class="nav-link">Accueil</a>
+        <a href="/comment-ca-marche.html" class="nav-link">Comment ça fonctionne</a>
+        <a href="/comparatif.html" class="nav-link">Comparatif</a>
+        <a href="/guides/index.html" class="nav-link">Guides Réforme</a>
+        <a href="/faq.html" class="nav-link">FAQ</a>
+        <a href="/contact.html" class="nav-link">Contact</a>
+      </nav>
+      
+      <div class="header-actions">
+        <a href="/index.html#comparator" class="btn btn-outline btn-sm">Voir le site public</a>
+        <button id="btn-logout" class="btn btn-primary btn-sm" style="background-color: var(--status-danger); border: none; margin-left: 8px;">Déconnexion</button>
+        <div class="burger-menu" aria-label="Menu Mobile" role="button">
+          <span class="burger-bar"></span>
+          <span class="burger-bar"></span>
+          <span class="burger-bar"></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Title Hero -->
+  <section class="section page-hero" style="padding: 40px 0;">
+    <div class="container">
+      <h1>Console d'Administration</h1>
+      <p style="color: rgba(255, 255, 255, 0.8); max-width: 600px; margin: 0 auto;">Gérez les plateformes de facturation, configurez le questionnaire de ciblage et accédez aux données des prospects.</p>
+    </div>
+  </section>
+
+  <!-- Admin Panel Container -->
+  <section class="section">
+    <div class="container">
+      <div class="admin-wrapper">
+        
+        <!-- Tabs Navigation -->
+        <div class="admin-tabs">
+          <button class="admin-tab-btn active" data-tab="platforms">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+            Plateformes PDP/PAFE
+          </button>
+          <button class="admin-tab-btn" data-tab="questionnaire">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+            Questionnaire de Ciblage
+          </button>
+          <button class="admin-tab-btn" data-tab="leads">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            Leads & Contacts
+          </button>
+        </div>
+
+        <!-- Notification Banner -->
+        <div id="admin-notify" class="admin-toast" style="display: none;">
+          Action effectuée avec succès !
+        </div>
+
+        <!-- =================== TAB 1: PLATFORMS =================== -->
+        <div class="admin-tab-content active" id="tab-platforms">
+          <div class="admin-content-header">
+            <div>
+              <h2>Liste des Plateformes Référencées</h2>
+              <p>Ajoutez, modifiez ou supprimez les fiches descriptives des PDP/PAFE du comparateur.</p>
+            </div>
+            <button id="btn-add-platform" class="btn btn-primary btn-sm">
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
+              Ajouter une Plateforme
+            </button>
+          </div>
+
+          <!-- Platforms Table -->
+          <div class="admin-table-wrapper" id="platforms-table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Logo</th>
+                  <th>Nom de la Plateforme</th>
+                  <th>Prix de base</th>
+                  <th>Note globale</th>
+                  <th>Recommandé</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="platforms-tbody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Platform Editor (Add/Edit Form) -->
+          <div class="admin-form-box" id="platform-form-container" style="display: none;">
+            <h3 id="form-platform-title">Modifier la Plateforme</h3>
+            <form id="platform-form" onsubmit="event.preventDefault();">
+              <input type="hidden" id="form-platform-index" />
+              <input type="hidden" id="form-platform-id" />
+
+              <div class="admin-form-grid">
+                <div class="q-form-group">
+                  <label class="q-form-label" for="p-name">Nom complet *</label>
+                  <input type="text" id="p-name" class="q-form-input" required placeholder="Ex: Pennylane (Candidat PDP)">
+                </div>
+
+                <div class="q-form-group">
+                  <label class="q-form-label" for="p-price">Prix mensuel (€) *</label>
+                  <input type="number" id="p-price" class="q-form-input" required min="0" placeholder="Ex: 19">
+                </div>
+
+                <div class="q-form-group">
+                  <label class="q-form-label" for="p-priceLabel">Libellé du prix *</label>
+                  <input type="text" id="p-priceLabel" class="q-form-input" required placeholder="Ex: À partir de 19 € / mois">
+                </div>
+
+                <div class="q-form-group">
+                  <label class="q-form-label" for="p-rating">Note globale (0.0 à 5.0) *</label>
+                  <input type="number" id="p-rating" class="q-form-input" required min="0" max="5" step="0.1" placeholder="Ex: 4.8">
+                </div>
+
+                <div class="q-form-group">
+                  <label class="q-form-label" for="p-url">URL de l'offre *</label>
+                  <input type="url" id="p-url" class="q-form-input" required placeholder="Ex: https://www.pennylane.com/">
+                </div>
+
+                <div class="q-form-group" style="grid-column: span 2;">
+                  <label class="q-form-label" for="p-logo">Logo de la plateforme (Code SVG inline ou image URL) *</label>
+                  <textarea id="p-logo" class="q-form-input" rows="2" required placeholder="Saisissez le code SVG complet pour un affichage optimal ou l'URL de l'image"></textarea>
+                </div>
+
+                <div class="q-form-group" style="grid-column: span 2;">
+                  <label class="q-form-label" for="p-desc">Description courte *</label>
+                  <textarea id="p-desc" class="q-form-input" rows="3" required placeholder="Description générale de la plateforme (1 à 2 phrases)"></textarea>
+                </div>
+
+                <div class="q-form-group">
+                  <label class="q-form-label" for="p-advantages">Avantages (Un par ligne) *</label>
+                  <textarea id="p-advantages" class="q-form-input" rows="4" required placeholder="Lien direct expert-comptable&#10;Synchro bancaire fluide"></textarea>
+                </div>
+
+                <div class="q-form-group">
+                  <label class="q-form-label" for="p-disadvantages">Limites / Inconvénients (Un par ligne) *</label>
+                  <textarea id="p-disadvantages" class="q-form-input" rows="4" required placeholder="Engagements annuels fréquents&#10;Tarif progressif au volume"></textarea>
+                </div>
+              </div>
+
+              <!-- Checkbox Features -->
+              <h4 style="margin: 30px 0 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Fonctionnalités Disponibles</h4>
+              <div class="admin-checkbox-grid">
+                <label class="admin-checkbox-label">
+                  <input type="checkbox" id="f-eInvoicing"> Émission (e-Invoicing)
+                </label>
+                <label class="admin-checkbox-label">
+                  <input type="checkbox" id="f-receiving"> Réception Factures
+                </label>
+                <label class="admin-checkbox-label">
+                  <input type="checkbox" id="f-payment"> Paiement intégré
+                </label>
+                <label class="admin-checkbox-label">
+                  <input type="checkbox" id="f-signature"> Signature Électronique
+                </label>
+                <label class="admin-checkbox-label">
+                  <input type="checkbox" id="f-reminders"> Relances impayées
+                </label>
+                <label class="admin-checkbox-label">
+                  <input type="checkbox" id="f-api"> API & Connecteurs
+                </label>
+                <label class="admin-checkbox-label">
+                  <input type="checkbox" id="f-multiUser"> Accès multi-collaborateurs
+                </label>
+                <label class="admin-checkbox-label">
+                  <input type="checkbox" id="f-quotes"> Gestion des devis
+                </label>
+                <label class="admin-checkbox-label">
+                  <input type="checkbox" id="f-accountingSync"> Synchro Bancaire
+                </label>
+                <label class="admin-checkbox-label">
+                  <input type="checkbox" id="f-assistance"> Accompagnement / Onboarding
+                </label>
+              </div>
+
+              <!-- Target Criteria Selection -->
+              <h4 style="margin: 30px 0 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Critères de Recommandation & Ciblage</h4>
+              
+              <div class="admin-form-grid">
+                <div class="q-form-group">
+                  <label class="q-form-label">Statuts juridiques compatibles</label>
+                  <div class="admin-multiselect-box" id="c-status">
+                    <!-- Checkboxes generated dynamically from questions status choices -->
+                  </div>
+                </div>
+
+                <div class="q-form-group">
+                  <label class="q-form-label">Volumes de factures compatibles</label>
+                  <div class="admin-multiselect-box" id="c-volume">
+                    <!-- Checkboxes generated dynamically -->
+                  </div>
+                </div>
+
+                <div class="q-form-group">
+                  <label class="q-form-label">Logiciels compatibles / ERP Actuel</label>
+                  <div class="admin-multiselect-box" id="c-software">
+                    <!-- Checkboxes generated dynamically -->
+                  </div>
+                </div>
+
+                <div class="q-form-group">
+                  <label class="q-form-label">Budgets compatibles</label>
+                  <div class="admin-multiselect-box" id="c-budget">
+                    <!-- Checkboxes generated dynamically -->
+                  </div>
+                </div>
+              </div>
+
+              <div class="q-form-group" style="margin-top: 20px;">
+                <label class="admin-checkbox-label" style="font-weight: 700;">
+                  <input type="checkbox" id="p-recommended"> Mettre en avant sur le podium en tant que "Recommandé"
+                </label>
+              </div>
+
+              <div class="admin-form-actions">
+                <button type="submit" class="btn btn-primary" id="btn-save-platform">Enregistrer les modifications</button>
+                <button type="button" class="btn btn-outline" id="btn-cancel-platform">Annuler</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- =================== TAB 2: QUESTIONNAIRE =================== -->
+        <div class="admin-tab-content" id="tab-questionnaire">
+          <div class="admin-content-header">
+            <div>
+              <h2>Personnaliser le Questionnaire Interactif</h2>
+              <p>Modifiez l'intitulé des questions, ajoutez des explications et gérez les options de choix du questionnaire client.</p>
+            </div>
+          </div>
+
+          <div class="admin-questionnaire-layout">
+            <!-- Questions List Sidebar -->
+            <div class="admin-q-list" id="q-list-container">
+              <!-- Dynamically populated questions menu -->
+            </div>
+
+            <!-- Single Question Editor -->
+            <div class="admin-q-editor" id="q-editor-container" style="display: none;">
+              <h3 id="edit-q-header">Modifier la Question X</h3>
+              <form id="question-form" onsubmit="event.preventDefault();">
+                <input type="hidden" id="form-q-step" />
+
+                <div class="q-form-group">
+                  <label class="q-form-label" for="q-title">Titre de la Question *</label>
+                  <input type="text" id="q-title" class="q-form-input" required>
+                </div>
+
+                <div class="q-form-group">
+                  <label class="q-form-label" for="q-subtitle">Sous-titre explicatif *</label>
+                  <input type="text" id="q-subtitle" class="q-form-input" required>
+                </div>
+
+                <h4 style="margin: 30px 0 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Options de choix proposées</h4>
+                <div class="admin-options-wrapper" id="q-options-container">
+                  <!-- Choices list with icon & label -->
+                </div>
+
+                <div style="margin-top: 20px; display: flex; gap: 12px;">
+                  <button type="button" class="btn btn-outline btn-sm" id="btn-add-q-option">
+                    + Ajouter une option de choix
+                  </button>
+                </div>
+
+                <div class="admin-form-actions" style="margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+                  <button type="submit" class="btn btn-primary" id="btn-save-question">Mettre à jour la question</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- =================== TAB 3: LEADS =================== -->
+        <div class="admin-tab-content" id="tab-leads">
+          
+          <!-- Leads Questionnaire Table -->
+          <div class="admin-content-header" style="margin-bottom: 20px;">
+            <div>
+              <h2>Prospects du Comparateur (Leads)</h2>
+              <p>Liste des utilisateurs ayant complété le questionnaire et demandé leur résultat.</p>
+            </div>
+            <div style="display: flex; gap: 12px;">
+              <button id="btn-export-leads" class="btn btn-outline btn-sm">Exporter en CSV</button>
+              <button id="btn-clear-leads" class="btn btn-outline btn-sm" style="color: var(--status-danger); border-color: #fca5a5;">Vider la liste</button>
+            </div>
+          </div>
+
+          <div class="admin-table-wrapper" style="margin-bottom: 50px;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Nom Prospect</th>
+                  <th>Entreprise</th>
+                  <th>Email</th>
+                  <th>Téléphone</th>
+                  <th>Statut</th>
+                  <th>Volume</th>
+                  <th>Budget Max</th>
+                </tr>
+              </thead>
+              <tbody id="leads-tbody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Contact Requests Table -->
+          <div class="admin-content-header" style="margin-bottom: 20px;">
+            <div>
+              <h2>Demandes de Contact Support</h2>
+              <p>Liste des messages et demandes d'accompagnement envoyés via la page de contact.</p>
+            </div>
+            <div style="display: flex; gap: 12px;">
+              <button id="btn-export-contacts" class="btn btn-outline btn-sm">Exporter en CSV</button>
+              <button id="btn-clear-contacts" class="btn btn-outline btn-sm" style="color: var(--status-danger); border-color: #fca5a5;">Vider la liste</button>
+            </div>
+          </div>
+
+          <div class="admin-table-wrapper">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Nom</th>
+                  <th>Entreprise</th>
+                  <th>Email</th>
+                  <th>Téléphone</th>
+                  <th>Question / Message</th>
+                </tr>
+              </thead>
+              <tbody id="contacts-tbody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Settings / Database Reset Footer Section -->
+      <div class="admin-card" style="margin-top: 40px; border-color: #fca5a5; background-color: #fef2f2; padding: 24px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
+        <div>
+          <h4 style="color: var(--status-danger); font-size: 16px; font-weight: 800; margin-bottom: 4px;">Zone de Danger : Réinitialiser la Base de Données</h4>
+          <p style="font-size: 14px; color: var(--text-muted);">Supprimez toutes vos modifications locales et rechargez la liste initiale des 8 plateformes et des 7 questions par défaut.</p>
+        </div>
+        <button id="btn-reset-db" class="btn btn-secondary" style="background-color: var(--status-danger); box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);">
+          Réinitialiser toutes les données
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo">
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 28px; height: 28px;">
+              <circle cx="50" cy="50" r="45" fill="#10B981" />
+              <path d="M35 50 L45 60 L65 40" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span style="color: white;">e<span style="color: var(--accent);">Factu</span></span>
+          </div>
+          <p>Le comparateur indépendant de référence pour trouver votre plateforme de facturation électronique obligatoire (PDP/PAFE) en France.</p>
+        </div>
+        
+        <div>
+          <h3>Navigation</h3>
+          <ul class="footer-links">
+            <li><a href="/index.html">Accueil</a></li>
+            <li><a href="/comment-ca-marche.html">Comment ça marche</a></li>
+            <li><a href="/comparatif.html">Tableau Comparatif</a></li>
+            <li><a href="/guides/index.html">Guides Réforme</a></li>
+            <li><a href="/faq.html">FAQ</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h3>Légal</h3>
+          <ul class="footer-links">
+            <li><a href="/mentions-legales.html">Mentions Légales</a></li>
+            <li><a href="/politique-confidentialite.html">Confidentialité</a></li>
+            <li><a href="/contact.html">Nous Contacter</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-contact">
+          <h3>Contact</h3>
+          <p>
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            contact@efactu.fr
+          </p>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>&copy; 2026 eFactu. Tous droits réservés.</p>
+        <div class="footer-legal-links">
+          <a href="/mentions-legales.html">Mentions légales</a>
+          <a href="/politique-confidentialite.html">Protection des données</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script type="module" src="/src/js/main.js"></script>
+  <script type="module" src="/src/js/admin.js"></script>
+</body>
+</html>
