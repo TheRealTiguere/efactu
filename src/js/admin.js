@@ -57,6 +57,17 @@ class AdminController {
 
     // Settings
     this.btnResetDb = document.getElementById('btn-reset-db');
+
+    // QR Code Tab
+    this.qrUrlInput = document.getElementById('qr-url');
+    this.qrSizeSelect = document.getElementById('qr-size');
+    this.qrForm = document.getElementById('qrcode-gen-form');
+    this.qrPreviewContainer = document.getElementById('qr-preview-container');
+    this.qrActionsContainer = document.getElementById('qr-actions-container');
+    this.btnGenerateQr = document.getElementById('btn-generate-qr');
+    this.btnDownloadQr = document.getElementById('btn-download-qr');
+    this.btnPrintQr = document.getElementById('btn-print-qr');
+    this.btnCopyQrLink = document.getElementById('btn-copy-qr-link');
   }
 
   bindEvents() {
@@ -130,6 +141,16 @@ class AdminController {
         sessionStorage.removeItem('efactu_admin_token');
         window.location.replace('/admin-login.html');
       });
+    }
+
+    // QR Code Tab Init & Events
+    if (this.qrUrlInput) {
+      this.qrUrlInput.value = window.location.origin || 'https://efactu.fr';
+      
+      this.qrForm.addEventListener('submit', (e) => this.handleQrGenerate(e));
+      this.btnDownloadQr.addEventListener('click', () => this.handleQrDownload());
+      this.btnPrintQr.addEventListener('click', () => this.handleQrPrint());
+      this.btnCopyQrLink.addEventListener('click', () => this.handleQrCopyLink());
     }
   }
 
@@ -604,6 +625,102 @@ class AdminController {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  }
+
+  handleQrGenerate(e) {
+    e.preventDefault();
+    const url = this.qrUrlInput.value.trim();
+    const size = this.qrSizeSelect.value;
+    
+    if (!url) return;
+    
+    this.btnGenerateQr.disabled = true;
+    this.btnGenerateQr.textContent = "Génération...";
+    
+    // Generate QR using api.qrserver.com
+    const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(url)}`;
+    
+    // Preload image
+    const img = new Image();
+    img.onload = () => {
+      this.qrPreviewContainer.innerHTML = `<img src="${qrCodeUrl}" alt="QR Code" id="generated-qr-img" style="max-width: 100%; height: auto; display: block;" />`;
+      this.qrActionsContainer.style.display = 'flex';
+      this.btnGenerateQr.disabled = false;
+      this.btnGenerateQr.textContent = "Générer le QR Code";
+      this.currentQrCodeUrl = qrCodeUrl;
+      this.showToast('QR Code généré avec succès !');
+    };
+    img.onerror = () => {
+      this.qrPreviewContainer.innerHTML = `<div style="color: var(--status-danger);">Erreur de génération. Réessayez.</div>`;
+      this.btnGenerateQr.disabled = false;
+      this.btnGenerateQr.textContent = "Générer le QR Code";
+    };
+    img.src = qrCodeUrl;
+  }
+
+  async handleQrDownload() {
+    if (!this.currentQrCodeUrl) return;
+    try {
+      this.showToast('Préparation du téléchargement...');
+      const response = await fetch(this.currentQrCodeUrl);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = `qrcode-efactu-${this.qrSizeSelect.value}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+      this.showToast('Téléchargement démarré !');
+    } catch (err) {
+      console.error(err);
+      this.showToast('Erreur lors du téléchargement. Veuillez copier le lien.');
+    }
+  }
+
+  handleQrPrint() {
+    if (!this.currentQrCodeUrl) return;
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      this.showToast('Veuillez autoriser les fenêtres surgissantes pour imprimer.');
+      return;
+    }
+    const targetUrl = this.qrUrlInput.value.trim();
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Imprimer le QR Code - eFactu</title>
+          <style>
+            body { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; font-family: system-ui, -apple-system, sans-serif; text-align: center; }
+            img { max-width: 280px; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 20px; }
+            h2 { color: #0d9488; font-weight: 800; margin: 0 0 10px; }
+            p { color: #475569; font-size: 14px; margin: 0; }
+          </style>
+        </head>
+        <body>
+          <h2>QR Code de Redirection</h2>
+          <img src="${this.currentQrCodeUrl}" alt="QR Code" />
+          <p>Destination : <strong>${targetUrl}</strong></p>
+          <script>
+            window.onload = function() {
+              window.print();
+              setTimeout(function() { window.close(); }, 500);
+            }
+          <\/script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  }
+
+  handleQrCopyLink() {
+    if (!this.currentQrCodeUrl) return;
+    navigator.clipboard.writeText(this.currentQrCodeUrl).then(() => {
+      this.showToast("Lien de l'image copié dans le presse-papiers !");
+    }).catch(() => {
+      this.showToast('Impossible de copier automatiquement.');
+    });
   }
 }
 

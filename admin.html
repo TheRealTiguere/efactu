@@ -89,6 +89,10 @@
             <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
             Leads & Contacts
           </button>
+          <button class="admin-tab-btn" data-tab="qrcode">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m-8 8h2m0 0v-2m0 2v2m12-2h2m0 0v-2m0 2v2M4 12H2m2 0V10m0 2v2m12-2h2m0 0V10m0 2v2M9 9h6v6H9V9zm-4 7h2m2 0h2m-6 2h2m2 0h2"/></svg>
+            Générateur de QR Code
+          </button>
         </div>
 
         <!-- Notification Banner -->
@@ -379,6 +383,63 @@
             </table>
           </div>
 
+        </div>
+
+        <!-- =================== TAB 4: QR CODE GENERATOR =================== -->
+        <div class="admin-tab-content" id="tab-qrcode">
+          <div class="admin-content-header">
+            <div>
+              <h2>Générer un QR Code de Redirection</h2>
+              <p>Générez, téléchargez et imprimez un QR Code redirigeant directement vers la page d'accueil ou une autre URL de votre choix.</p>
+            </div>
+          </div>
+
+          <div class="admin-form-box" style="display: block; margin-top: 20px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start;">
+              <!-- Left side: controls -->
+              <div>
+                <form id="qrcode-gen-form" onsubmit="event.preventDefault();">
+                  <div class="q-form-group" style="margin-bottom: 24px;">
+                    <label class="q-form-label" for="qr-url">URL de destination (Redirection) *</label>
+                    <input type="url" id="qr-url" class="login-input" style="background: rgba(0,0,0,0.02); border: 1px solid #cbd5e1; color: #1e293b;" placeholder="https://efactu.fr" required />
+                    <p style="font-size: 12px; color: #64748b; margin-top: 6px;">
+                      Par défaut, le QR code redirigera vers la page d'accueil de ce site.
+                    </p>
+                  </div>
+
+                  <div class="q-form-group" style="margin-bottom: 30px;">
+                    <label class="q-form-label" for="qr-size">Taille du QR Code</label>
+                    <select id="qr-size" class="login-input" style="background: rgba(0,0,0,0.02); border: 1px solid #cbd5e1; color: #1e293b; height: 50px;">
+                      <option value="200">200 x 200 px</option>
+                      <option value="300" selected>300 x 300 px</option>
+                      <option value="400">400 x 400 px</option>
+                      <option value="500">500 x 500 px</option>
+                    </select>
+                  </div>
+
+                  <button type="submit" class="btn btn-primary" id="btn-generate-qr" style="width: 100%; font-weight: 700; padding: 14px;">
+                    Générer le QR Code
+                  </button>
+                </form>
+              </div>
+
+              <!-- Right side: Preview card -->
+              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-lg); padding: 32px; min-height: 320px; text-align: center;">
+                <div id="qr-preview-container" style="background: white; padding: 16px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 24px; min-width: 232px; min-height: 232px; position: relative;">
+                  <!-- QR Code image will be injected here -->
+                  <div id="qr-placeholder" style="color: #94a3b8; font-size: 14px;">Le QR Code apparaîtra ici</div>
+                </div>
+
+                <div id="qr-actions-container" style="display: none; width: 100%; gap: 12px; flex-direction: column;">
+                  <button id="btn-download-qr" class="btn btn-primary" style="width: 100%; font-weight: 700;">Télécharger l'image (PNG)</button>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%;">
+                    <button id="btn-print-qr" class="btn btn-outline" style="font-weight: 700;">Imprimer</button>
+                    <button id="btn-copy-qr-link" class="btn btn-outline" style="font-weight: 700;">Copier le lien</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
       </div>
