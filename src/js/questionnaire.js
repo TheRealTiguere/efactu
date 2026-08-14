@@ -93,7 +93,7 @@ class QuestionnaireController {
           </div>
         `;
       } else {
-        const gridClass = q.options.length > 4 ? 'q-options-grid-3' : 'q-options-grid';
+        const gridClass = q.options.length > 5 ? 'q-options-grid-3' : 'q-options-grid';
         optionsHTML += `<div class="${gridClass}">`;
         q.options.forEach(opt => {
           optionsHTML += `
