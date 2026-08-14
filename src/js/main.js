@@ -122,15 +122,37 @@ function markActiveNavLink() {
   const currentPath = window.location.pathname;
   const navLinks = document.querySelectorAll('.nav-link');
   
+  // Normalize current path: strip /index.html and .html, normalize trailing slashes
+  let cleanCurrent = currentPath.replace(/\/index\.html$/, '/').replace(/\.html$/, '');
+  if (cleanCurrent !== '/' && cleanCurrent.endsWith('/')) {
+    cleanCurrent = cleanCurrent.slice(0, -1);
+  }
+  if (!cleanCurrent) cleanCurrent = '/';
+
   navLinks.forEach(link => {
     const linkPath = link.getAttribute('href');
     if (!linkPath) return;
-    
-    // Check if the current URL ends with the link path, or if we are at root for index.html
-    const isRoot = (currentPath === '/' || currentPath.endsWith('index.html')) && (linkPath === '/' || linkPath.endsWith('index.html'));
-    const isSubPage = currentPath.includes(linkPath.replace('.html', '')) && linkPath !== '/' && !linkPath.endsWith('index.html');
-    
-    if (isRoot || isSubPage) {
+
+    let cleanLink = linkPath.replace(/\/index\.html$/, '/').replace(/\.html$/, '');
+    if (cleanLink !== '/' && cleanLink.endsWith('/')) {
+      cleanLink = cleanLink.slice(0, -1);
+    }
+    if (!cleanLink) cleanLink = '/';
+
+    let isActive = false;
+
+    if (cleanLink === '/') {
+      // Home link should only be active when strictly on home
+      isActive = (cleanCurrent === '/');
+    } else if (cleanLink === '/guides' || linkPath.startsWith('/guides')) {
+      // Guides section link matches anything inside /guides
+      isActive = cleanCurrent.startsWith('/guides');
+    } else {
+      // Other pages (e.g. /comment-ca-marche, /comparatif, /faq, /contact)
+      isActive = (cleanCurrent === cleanLink);
+    }
+
+    if (isActive) {
       link.classList.add('active');
     } else {
       link.classList.remove('active');
