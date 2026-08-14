@@ -71,7 +71,7 @@ class QuestionnaireController {
     // Update Progress Bar & Header
     const progressPercent = Math.round((currentNum / totalSections) * 100);
     if (this.progressBar) this.progressBar.style.width = `${progressPercent}%`;
-    if (this.progressText) this.progressText.textContent = `Section ${currentNum} sur ${totalSections} · ${currentSection.title.replace(/^Section [A-I] · /, '')}`;
+    if (this.progressText) this.progressText.textContent = `Étape ${currentNum} sur ${totalSections} · ${currentSection.title}`;
     if (this.progressPercent) this.progressPercent.textContent = `${progressPercent}%`;
 
     // Render HTML inside stepsContainer
@@ -98,7 +98,7 @@ class QuestionnaireController {
       this.prevBtn.style.visibility = this.currentSectionIndex > 0 ? 'visible' : 'hidden';
     }
     if (this.nextBtn) {
-      this.nextBtn.textContent = (currentNum === totalSections) ? 'Générer mon comparatif' : 'Section suivante →';
+      this.nextBtn.textContent = (currentNum === totalSections) ? 'Générer mon comparatif' : 'Continuer →';
     }
 
     this.bindSectionInputs(sectionWrapper);

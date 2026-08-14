@@ -3,7 +3,7 @@ import { getCachedQuestions, saveQuestionsDb } from './db.js';
 export const questionnaireSections = [
   {
     id: "A",
-    title: "Section A · Périmètre de l'entreprise",
+    title: "Périmètre de l'entreprise",
     description: "Identifions la structure juridique et la taille de votre organisation pour définir vos obligations calendaires et multi-entités.",
     questions: [
       {
@@ -152,7 +152,7 @@ export const questionnaireSections = [
   },
   {
     id: "B",
-    title: "Section B · Activité et nature des flux",
+    title: "Activité et nature des flux",
     description: "Analysons vos flux de facturation (B2B, B2C, B2G, international) et vos volumes annuels.",
     questions: [
       {
@@ -323,7 +323,7 @@ export const questionnaireSections = [
   },
   {
     id: "C",
-    title: "Section C · Environnement logiciel",
+    title: "Environnement logiciel",
     description: "Vérifions la compatibilité de vos outils actuels (outils de facturation, comptabilité, ERP, caisse).",
     questions: [
       {
@@ -486,7 +486,7 @@ export const questionnaireSections = [
   },
   {
     id: "D",
-    title: "Section D · Besoins fonctionnels",
+    title: "Besoins fonctionnels",
     description: "Définissons les fonctionnalités indispensables pour votre organisation administrative.",
     questions: [
       {
@@ -582,7 +582,7 @@ export const questionnaireSections = [
   },
   {
     id: "E",
-    title: "Section E · Utilisateurs et sécurité",
+    title: "Utilisateurs et sécurité",
     description: "Évaluons les accès d'équipe, les exigences de localisation et les certifications de sécurité.",
     questions: [
       {
@@ -663,7 +663,7 @@ export const questionnaireSections = [
   },
   {
     id: "F",
-    title: "Section F · Expert-comptable",
+    title: "Expert-comptable",
     description: "Coordonnez les échanges avec votre cabinet d'expertise comptable.",
     questions: [
       {
@@ -714,7 +714,7 @@ export const questionnaireSections = [
   },
   {
     id: "G",
-    title: "Section G · Budget et accompagnement",
+    title: "Budget et accompagnement",
     description: "Définissez votre budget cible et le niveau de support technique souhaité.",
     questions: [
       {
@@ -815,8 +815,8 @@ export const questionnaireSections = [
   },
   {
     id: "H",
-    title: "Section H · Spécificités Hôtellerie - Restauration",
-    description: "Section dédiée aux établissements hôteliers, résidences et restaurants (PMS, caisses, multi-taux de TVA, arrhes et débours).",
+    title: "Spécificités Hôtellerie - Restauration",
+    description: "Spécificités dédiées aux établissements hôteliers, résidences et restaurants (PMS, caisses, multi-taux de TVA, arrhes et débours).",
     condition: { field: "sector", value: "hotellerie_restauration" },
     questions: [
       {
@@ -1100,7 +1100,7 @@ export const questionnaireSections = [
   },
   {
     id: "I",
-    title: "Section I · Restitution du résultat et export",
+    title: "Restitution du résultat et export",
     description: "Dernière étape : transmission de votre rapport d'audit personnalisé, exports et options d'accompagnement.",
     questions: [
       {
