@@ -18,6 +18,7 @@ export default defineConfig({
         guidesIndex: resolve(__dirname, 'guides/index.html'),
         guideReforme: resolve(__dirname, 'guides/guide-reforme.html'),
         guidePdp: resolve(__dirname, 'guides/guide-pdp.html'),
+        methodologie: resolve(__dirname, 'methodologie.html'),
         admin: resolve(__dirname, 'admin.html'),
         adminLogin: resolve(__dirname, 'admin-login.html'),
       },

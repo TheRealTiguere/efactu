@@ -314,3 +314,176 @@
   background-color: var(--accent-light) !important;
   color: var(--accent-dark) !important;
 }
+
+/* Question Block & Role Badges */
+.q-question-block {
+  margin-bottom: 32px;
+  animation: fadeIn 0.3s ease;
+}
+
+.q-question-header {
+  margin-bottom: 14px;
+  text-align: left;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.q-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.q-core-dot {
+  color: #0d9488;
+  font-weight: 900;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.q-branch-arrow {
+  color: #6366f1;
+  font-weight: 900;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.q-question-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: #0b132b;
+  margin: 0;
+  flex: 1;
+}
+
+.q-question-sub {
+  font-size: 13.5px;
+  color: #64748b;
+  margin: 4px 0 0 26px;
+  line-height: 1.4;
+}
+
+.q-role-badge {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.role-badge-filtre {
+  background-color: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+.role-badge-ponderation {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.role-badge-info {
+  background-color: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+/* Option Card Content */
+.q-option-text-wrapper {
+  flex: 1;
+  text-align: left;
+}
+
+.q-option-desc {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 500;
+  margin-top: 3px;
+  line-height: 1.3;
+}
+
+.q-indicator-checkbox {
+  border-radius: 4px !important;
+}
+
+/* Select Custom */
+.q-select-custom {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 18px;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+/* Consent Box */
+.q-consent-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  text-align: left;
+}
+
+.q-consent-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 13.5px;
+  color: #334155;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.q-consent-label input[type="checkbox"] {
+  margin-top: 3px;
+  width: 18px;
+  height: 18px;
+  accent-color: #0d9488;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+/* Shake error animation */
+.shake-highlight {
+  animation: shakeHighlight 0.6s ease;
+}
+
+@keyframes shakeHighlight {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); border-color: #ef4444; }
+  40%, 80% { transform: translateX(6px); border-color: #ef4444; }
+}
+
+/* Print Stylesheet for Audit Report */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .results-dashboard, .results-dashboard * {
+    visibility: visible;
+  }
+  .results-dashboard {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: #ffffff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .results-export-bar, #btn-restart-quiz, .header, .footer, .btn {
+    display: none !important;
+  }
+  .platform-card {
+    page-break-inside: avoid;
+    box-shadow: none !important;
+    border: 1px solid #cbd5e1 !important;
+  }
+}
+

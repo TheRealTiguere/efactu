@@ -1,4 +1,4 @@
-import { getQuestions } from './data/questions.js';
+import { questionnaireSections } from './data/questions.js';
 import { recommendPlatforms } from './recommender.js';
 import { initDatabase, saveLeadDb } from './data/db.js';
 
@@ -13,24 +13,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 class QuestionnaireController {
   constructor(formElement) {
     this.form = formElement;
-    this.currentStepIndex = 0;
-    this.answers = {
-      status: '',
-      volume: '',
-      software: '',
-      accountant: '',
-      features: [],
-      budget: '',
-      assistance: '',
-      leadName: '',
-      leadCompany: '',
-      leadEmail: '',
-      leadPhone: ''
-    };
+    this.currentSectionIndex = 0;
+    this.answers = {};
     
     this.initElements();
-    this.renderStep();
-    this.bindEvents();
+    this.renderCurrentSection();
+    this.bindGlobalEvents();
   }
 
   initElements() {
@@ -40,677 +28,445 @@ class QuestionnaireController {
     this.stepsContainer = document.querySelector('.q-steps-container');
     this.prevBtn = document.querySelector('.q-btn-prev');
     this.nextBtn = document.querySelector('.q-btn-next');
-    
-    // Create HTML elements for steps dynamically
-    this.createStepsHTML();
-    
-    this.steps = Array.from(document.querySelectorAll('.q-step'));
   }
 
-  createStepsHTML() {
-    this.stepsContainer.innerHTML = '';
-    
-    // Step 1 to 7 from questions configuration
-    getQuestions().forEach((q) => {
-      const stepDiv = document.createElement('div');
-      stepDiv.className = 'q-step';
-      stepDiv.dataset.step = q.step;
-      stepDiv.dataset.id = q.id;
-      stepDiv.dataset.type = q.type;
-      
-      let optionsHTML = '';
-      
-      if (q.id === 'software') {
-        // Render Top 6 popular tools
-        const top6Values = ['none', 'excel', 'sage', 'pennylane', 'ebp', 'cegid'];
-        const top6Options = q.options.filter(opt => top6Values.includes(opt.value));
-        
-        optionsHTML += `<div class="q-options-grid-3">`;
-        top6Options.forEach(opt => {
-          optionsHTML += `
-            <div class="q-option-card" data-value="${opt.value}">
-              <div class="q-option-icon">${opt.icon}</div>
-              <div class="q-option-label">${opt.label}</div>
-              <div class="q-option-indicator"></div>
-            </div>
-          `;
-        });
-        optionsHTML += `</div>`;
-        
-        // Render searchable autocomplete input
-        optionsHTML += `
-          <div class="q-software-search-wrapper" style="margin-top: 32px; text-align: center;">
-            <label class="q-form-label" style="text-align: center; margin-bottom: 12px; display: block; font-weight: 700;">
-              Ou recherchez votre outil dans notre liste complète (+140 logiciels) :
-            </label>
-            <div class="q-search-input-container" style="position: relative; max-width: 460px; margin: 0 auto;">
-              <input type="text" id="software-search" class="q-form-input" placeholder="Saisissez le nom de votre logiciel (ex: Indy, Axonaut, Odoo...)" style="padding-right: 40px; text-align: center; background: #ffffff; border: 2px solid #e2e8f0; color: var(--text-dark); border-radius: var(--radius-md); font-size: 15px; font-weight: 600;">
-              <span class="search-icon" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; display: flex; align-items: center;">
-                <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-              </span>
-              <div id="software-search-results" class="q-search-results-list" style="display: none; position: absolute; left: 0; right: 0; top: 100%; background: #ffffff; border: 1px solid #cbd5e1; border-radius: var(--radius-md); max-height: 200px; overflow-y: auto; z-index: 1000; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-top: 6px; text-align: left;"></div>
-            </div>
-          </div>
-        `;
-      } else {
-        const gridClass = q.options.length > 5 ? 'q-options-grid-3' : 'q-options-grid';
-        optionsHTML += `<div class="${gridClass}">`;
-        q.options.forEach(opt => {
-          optionsHTML += `
-            <div class="q-option-card" data-value="${opt.value}">
-              <div class="q-option-icon">${opt.icon}</div>
-              <div class="q-option-label">${opt.label}</div>
-              <div class="q-option-indicator"></div>
-            </div>
-          `;
-        });
-        optionsHTML += `</div>`;
-      }
-      
-      stepDiv.innerHTML = `
-        <h3 class="q-step-title">${q.title}</h3>
-        <p class="q-step-subtitle">${q.subtitle}</p>
-        ${optionsHTML}
-      `;
-      
-      this.stepsContainer.appendChild(stepDiv);
-    });
-
-    // Step 8: Final lead capture step
-    const finalStepDiv = document.createElement('div');
-    finalStepDiv.className = 'q-step';
-    finalStepDiv.dataset.step = '8';
-    finalStepDiv.dataset.id = 'lead';
-    finalStepDiv.dataset.type = 'form';
-    
-    finalStepDiv.innerHTML = `
-      <h3 class="q-step-title">Dernière étape : Calculez vos résultats</h3>
-      <p class="q-step-subtitle">Saisissez vos coordonnées pour recevoir votre comparatif sur-mesure et accéder immédiatement aux meilleures plateformes.</p>
-      
-      <div class="q-form-group">
-        <label class="q-form-label" for="lead-name">Votre nom complet *</label>
-        <input type="text" id="lead-name" class="q-form-input" placeholder="Ex: Jean Dupont" required>
-        <div class="q-error-text" style="display: none;">Veuillez saisir votre nom.</div>
-      </div>
-      
-      <div class="q-form-group">
-        <label class="q-form-label" for="lead-company">Nom de l'entreprise *</label>
-        <input type="text" id="lead-company" class="q-form-input" placeholder="Ex: Dupont Tech" required>
-        <div class="q-error-text" style="display: none;">Veuillez saisir le nom de votre entreprise.</div>
-      </div>
-      
-      <div class="q-form-group">
-        <label class="q-form-label" for="lead-email">Adresse email professionnelle *</label>
-        <input type="email" id="lead-email" class="q-form-input" placeholder="Ex: jean.dupont@entreprise.fr" required>
-        <div class="q-error-text" style="display: none;">Veuillez saisir une adresse email professionnelle valide.</div>
-      </div>
-      
-      <div class="q-form-group">
-        <label class="q-form-label" for="lead-phone">Numéro de téléphone (Optionnel)</label>
-        <input type="tel" id="lead-phone" class="q-form-input" placeholder="Ex: 06 12 34 56 78">
-        <div class="q-error-text" style="display: none;">Veuillez saisir un numéro de téléphone valide.</div>
-      </div>
-
-      <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 24px; text-align: left;">
-        En cliquant sur le bouton ci-dessous, vous acceptez que vos données soient traitées conformément à notre politique de confidentialité pour vous transmettre les résultats. Vos données ne sont jamais vendues.
-      </div>
-    `;
-    
-    this.stepsContainer.appendChild(finalStepDiv);
-  }
-
-  bindEvents() {
-    // Nav buttons
-    this.prevBtn.addEventListener('click', () => this.navigate(-1));
-    this.nextBtn.addEventListener('click', () => this.navigate(1));
-    
-    // Options select click
-    this.stepsContainer.addEventListener('click', (e) => {
-      const optionCard = e.target.closest('.q-option-card');
-      if (!optionCard) return;
-
-      const stepDiv = optionCard.closest('.q-step');
-      const stepId = stepDiv.dataset.id;
-      const stepType = stepDiv.dataset.type;
-      const value = optionCard.dataset.value;
-
-      if (stepType === 'single') {
-        // Deselect others in this step
-        stepDiv.querySelectorAll('.q-option-card').forEach(card => {
-          card.classList.remove('selected');
-        });
-        
-        // Select current
-        optionCard.classList.add('selected');
-        this.answers[stepId] = value;
-        
-        // Auto advance to next step for smoother UX (except final choice pages if we prefer, but for single choice it's amazing)
-        setTimeout(() => {
-          this.navigate(1);
-        }, 300);
-        
-      } else if (stepType === 'multiple') {
-        // Toggle current selection
-        optionCard.classList.toggle('selected');
-        
-        // Collect all selected values
-        const selected = Array.from(stepDiv.querySelectorAll('.q-option-card.selected'))
-          .map(card => card.dataset.value);
-        
-        this.answers[stepId] = selected;
-      }
-    });
-
-    // Real-time input handling on final step
-    this.stepsContainer.addEventListener('input', (e) => {
-      if (e.target.classList.contains('q-form-input') && e.target.id !== 'software-search') {
-        e.target.classList.remove('error');
-        const errDiv = e.target.nextElementSibling;
-        if (errDiv && errDiv.classList.contains('q-error-text')) {
-          errDiv.style.display = 'none';
-        }
-      }
-    });
-
-    // Autocomplete Search Input
-    this.stepsContainer.addEventListener('input', (e) => {
-      if (e.target.id === 'software-search') {
-        const query = e.target.value.trim().toLowerCase();
-        const resultsDiv = document.getElementById('software-search-results');
-        if (!resultsDiv) return;
-
-        if (!query) {
-          resultsDiv.style.display = 'none';
-          return;
-        }
-
-        // Find software question config
-        const softwareQ = getQuestions().find(q => q.id === 'software');
-        if (!softwareQ) return;
-
-        // Filter choices (exclude none and excel)
-        const matches = softwareQ.options.filter(opt => 
-          opt.value !== 'none' && 
-          opt.value !== 'excel' && 
-          opt.label.toLowerCase().includes(query)
-        );
-
-        if (matches.length === 0) {
-          resultsDiv.innerHTML = `<div style="padding: 12px; color: var(--text-muted); font-size: 14px; text-align: center;">Aucun logiciel trouvé</div>`;
-        } else {
-          resultsDiv.innerHTML = matches.map(opt => `
-            <div class="q-search-result-item" data-value="${opt.value}" data-label="${opt.label}" style="padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #f1f5f9; font-size: 14px; color: var(--text-dark); transition: background 0.2s;">
-              ${opt.label}
-            </div>
-          `).join('');
-        }
-        resultsDiv.style.display = 'block';
-      }
-    });
-
-    // Autocomplete Result Click
-    this.stepsContainer.addEventListener('click', (e) => {
-      const resultItem = e.target.closest('.q-search-result-item');
-      if (!resultItem) return;
-
-      const value = resultItem.dataset.value;
-      const label = resultItem.dataset.label;
-      const searchInput = document.getElementById('software-search');
-      const resultsDiv = document.getElementById('software-search-results');
-
-      if (searchInput) searchInput.value = label;
-      if (resultsDiv) resultsDiv.style.display = 'none';
-
-      // Set value in answers
-      this.answers.software = value;
-
-      // Deselect options grid
-      const stepDiv = resultItem.closest('.q-step');
-      if (stepDiv) {
-        stepDiv.querySelectorAll('.q-option-card').forEach(card => card.classList.remove('selected'));
-      }
-
-      // Auto advance
-      setTimeout(() => {
-        this.navigate(1);
-      }, 300);
-    });
-
-    // Global Click to dismiss results dropdown
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.q-search-input-container')) {
-        const resultsDiv = document.getElementById('software-search-results');
-        if (resultsDiv) resultsDiv.style.display = 'none';
-      }
+  getActiveSections() {
+    return questionnaireSections.filter(sec => {
+      if (!sec.condition) return true;
+      const { field, value } = sec.condition;
+      return this.answers[field] === value;
     });
   }
 
-  renderStep() {
-    const totalSteps = this.steps.length;
-    const progressPercent = Math.round((this.currentStepIndex / (totalSteps - 1)) * 100);
-    
-    // Hide all steps, show current
-    this.steps.forEach((step, idx) => {
-      step.classList.remove('active');
-      if (idx === this.currentStepIndex) {
-        step.classList.add('active');
-        
-        // Apply directional animations
-        step.style.animation = 'slideInFromRight 0.35s forwards';
-      }
-    });
+  isQuestionVisible(q) {
+    if (!q.condition) return true;
+    const { field, value, in: inList, notIn: notInList, contains } = q.condition;
+    const currentVal = this.answers[field];
 
-    // Update Progress bar
-    if (this.progressBar) {
-      this.progressBar.style.width = `${progressPercent}%`;
+    if (value !== undefined) {
+      return currentVal === value;
     }
-    if (this.progressPercent) {
-      this.progressPercent.textContent = `${progressPercent}%`;
+    if (inList !== undefined) {
+      return Array.isArray(inList) && inList.includes(currentVal);
     }
-    if (this.progressText) {
-      this.progressText.textContent = `Étape ${this.currentStepIndex + 1} sur ${totalSteps}`;
+    if (notInList !== undefined) {
+      return Array.isArray(notInList) && !notInList.includes(currentVal);
     }
-
-    // Toggle navigation buttons visibility
-    if (this.currentStepIndex === 0) {
-      this.prevBtn.style.visibility = 'hidden';
-    } else {
-      this.prevBtn.style.visibility = 'visible';
+    if (contains !== undefined) {
+      return Array.isArray(currentVal) && currentVal.includes(contains);
     }
-
-    if (this.currentStepIndex === totalSteps - 1) {
-      this.nextBtn.innerHTML = `Voir mes résultats personnalisés <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>`;
-      this.nextBtn.classList.add('btn-primary');
-    } else {
-      this.nextBtn.innerHTML = `Continuer <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>`;
-      this.nextBtn.classList.remove('btn-primary');
-    }
-
-    // Populate previously selected options if any
-    this.restoreStepSelections();
-  }
-
-  restoreStepSelections() {
-    const currentStepDiv = this.steps[this.currentStepIndex];
-    const stepId = currentStepDiv.dataset.id;
-    const stepType = currentStepDiv.dataset.type;
-    const answer = this.answers[stepId];
-
-    if (!answer) return;
-
-    if (stepId === 'software') {
-      const searchInput = document.getElementById('software-search');
-      if (searchInput) {
-        const top6Values = ['none', 'excel', 'sage', 'pennylane', 'ebp', 'cegid'];
-        if (top6Values.includes(answer)) {
-          searchInput.value = '';
-        } else {
-          const softwareQ = getQuestions().find(q => q.id === 'software');
-          const matchedOpt = softwareQ ? softwareQ.options.find(opt => opt.value === answer) : null;
-          searchInput.value = matchedOpt ? matchedOpt.label : '';
-        }
-      }
-    }
-
-    if (stepType === 'single') {
-      currentStepDiv.querySelectorAll('.q-option-card').forEach(card => {
-        if (card.dataset.value === answer) {
-          card.classList.add('selected');
-        } else {
-          card.classList.remove('selected');
-        }
-      });
-    } else if (stepType === 'multiple') {
-      currentStepDiv.querySelectorAll('.q-option-card').forEach(card => {
-        if (answer.includes(card.dataset.value)) {
-          card.classList.add('selected');
-        } else {
-          card.classList.remove('selected');
-        }
-      });
-    }
-  }
-
-  navigate(direction) {
-    // If going forward, validate current step first
-    if (direction > 0 && !this.validateCurrentStep()) {
-      return;
-    }
-
-    const nextIdx = this.currentStepIndex + direction;
-    
-    // If reached end, submit form and display results
-    if (nextIdx >= this.steps.length) {
-      this.handleFormSubmission();
-      return;
-    }
-
-    // Otherwise, transition to next step
-    if (nextIdx >= 0 && nextIdx < this.steps.length) {
-      this.currentStepIndex = nextIdx;
-      this.renderStep();
-      
-      // Scroll smoothly to questionnaire container top
-      const containerRect = this.form.getBoundingClientRect();
-      const absoluteTop = window.scrollY + containerRect.top - 100;
-      window.scrollTo({
-        top: absoluteTop,
-        behavior: 'smooth'
-      });
-    }
-  }
-
-  validateCurrentStep() {
-    const currentStepDiv = this.steps[this.currentStepIndex];
-    const stepId = currentStepDiv.dataset.id;
-    const stepType = currentStepDiv.dataset.type;
-
-    if (stepType === 'single') {
-      const selected = currentStepDiv.querySelector('.q-option-card.selected');
-      if (!selected) {
-        // Show validation alert/toast (or shake visual effect)
-        this.shakeElement(currentStepDiv);
-        return false;
-      }
-      return true;
-    }
-
-    if (stepType === 'multiple') {
-      // Multiple is optional (needs can be empty), so always validate
-      return true;
-    }
-
-    if (stepType === 'form') {
-      // Lead Form Validation
-      const nameInput = document.getElementById('lead-name');
-      const companyInput = document.getElementById('lead-company');
-      const emailInput = document.getElementById('lead-email');
-      const phoneInput = document.getElementById('lead-phone');
-      
-      let isValid = true;
-
-      // Reset
-      [nameInput, companyInput, emailInput, phoneInput].forEach(inp => {
-        if (inp) {
-          inp.classList.remove('error');
-          const err = inp.nextElementSibling;
-          if (err && err.classList.contains('q-error-text')) err.style.display = 'none';
-        }
-      });
-
-      if (!nameInput.value.trim()) {
-        this.showInputError(nameInput);
-        isValid = false;
-      }
-
-      if (!companyInput.value.trim()) {
-        this.showInputError(companyInput);
-        isValid = false;
-      }
-
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailInput.value.trim() || !emailRegex.test(emailInput.value.trim())) {
-        this.showInputError(emailInput);
-        isValid = false;
-      }
-
-      if (phoneInput.value.trim()) {
-        // Optional phone validation: basic check for digits/spaces
-        const phoneRegex = /^[\d\s\+\-\(\).]{8,20}$/;
-        if (!phoneRegex.test(phoneInput.value.trim())) {
-          this.showInputError(phoneInput);
-          isValid = false;
-        }
-      }
-
-      if (!isValid) {
-        this.shakeElement(currentStepDiv);
-      } else {
-        // Store final values
-        this.answers.leadName = nameInput.value.trim();
-        this.answers.leadCompany = companyInput.value.trim();
-        this.answers.leadEmail = emailInput.value.trim();
-        this.answers.leadPhone = phoneInput.value.trim();
-      }
-
-      return isValid;
-    }
-
     return true;
   }
 
-  showInputError(inputElement) {
-    inputElement.classList.add('error');
-    const errText = inputElement.nextElementSibling;
-    if (errText && errText.classList.contains('q-error-text')) {
-      errText.style.display = 'block';
+  renderCurrentSection() {
+    const activeSections = this.getActiveSections();
+    if (this.currentSectionIndex >= activeSections.length) {
+      this.currentSectionIndex = activeSections.length - 1;
+    }
+
+    const currentSection = activeSections[this.currentSectionIndex];
+    const totalSections = activeSections.length;
+    const currentNum = this.currentSectionIndex + 1;
+
+    // Update Progress Bar & Header
+    const progressPercent = Math.round((currentNum / totalSections) * 100);
+    if (this.progressBar) this.progressBar.style.width = `${progressPercent}%`;
+    if (this.progressText) this.progressText.textContent = `Section ${currentNum} sur ${totalSections} · ${currentSection.title.replace(/^Section [A-I] · /, '')}`;
+    if (this.progressPercent) this.progressPercent.textContent = `${progressPercent}%`;
+
+    // Render HTML inside stepsContainer
+    this.stepsContainer.innerHTML = '';
+    const sectionWrapper = document.createElement('div');
+    sectionWrapper.className = 'q-step active';
+
+    const headerHTML = `
+      <h3 class="q-step-title">${currentSection.title}</h3>
+      <p class="q-step-subtitle">${currentSection.description}</p>
+    `;
+
+    let questionsHTML = '';
+    currentSection.questions.forEach(q => {
+      const visible = this.isQuestionVisible(q);
+      questionsHTML += this.renderQuestionHTML(q, visible);
+    });
+
+    sectionWrapper.innerHTML = headerHTML + questionsHTML;
+    this.stepsContainer.appendChild(sectionWrapper);
+
+    // Update Navigation Buttons
+    if (this.prevBtn) {
+      this.prevBtn.style.visibility = this.currentSectionIndex > 0 ? 'visible' : 'hidden';
+    }
+    if (this.nextBtn) {
+      this.nextBtn.textContent = (currentNum === totalSections) ? 'Générer mon comparatif' : 'Section suivante →';
+    }
+
+    this.bindSectionInputs(sectionWrapper);
+  }
+
+  renderQuestionHTML(q, isVisible) {
+    const hiddenStyle = isVisible ? '' : 'style="display: none;"';
+    const roleBadgeClass = q.role === 'filtre' ? 'role-badge-filtre' : (q.role === 'ponderation' ? 'role-badge-ponderation' : 'role-badge-info');
+    const badgeHTML = `<span class="q-role-badge ${roleBadgeClass}">${q.roleLabel}</span>`;
+    const isCorePrefix = q.isCore ? '<span class="q-core-dot" title="Question du socle obligatoire">•</span>' : '<span class="q-branch-arrow" title="Question approfondie conditionnelle">↳</span>';
+
+    let inputBodyHTML = '';
+
+    if (q.type === 'single') {
+      inputBodyHTML += `<div class="q-options-list">`;
+      q.options.forEach(opt => {
+        const isChecked = this.answers[q.id] === opt.value;
+        inputBodyHTML += `
+          <div class="q-option-card ${isChecked ? 'selected' : ''}" data-question-id="${q.id}" data-value="${opt.value}">
+            <div class="q-option-text-wrapper">
+              <div class="q-option-label">${opt.label}</div>
+              ${opt.desc ? `<div class="q-option-desc">${opt.desc}</div>` : ''}
+            </div>
+            <div class="q-option-indicator"></div>
+          </div>
+        `;
+      });
+      inputBodyHTML += `</div>`;
+    } else if (q.type === 'multiple') {
+      inputBodyHTML += `<div class="q-options-list" data-type="multiple">`;
+      const currentSelected = Array.isArray(this.answers[q.id]) ? this.answers[q.id] : [];
+      q.options.forEach(opt => {
+        const isChecked = currentSelected.includes(opt.value);
+        inputBodyHTML += `
+          <div class="q-option-card ${isChecked ? 'selected' : ''}" data-question-id="${q.id}" data-value="${opt.value}" data-multiple="true">
+            <div class="q-option-text-wrapper">
+              <div class="q-option-label">${opt.label}</div>
+              ${opt.desc ? `<div class="q-option-desc">${opt.desc}</div>` : ''}
+            </div>
+            <div class="q-option-indicator q-indicator-checkbox"></div>
+          </div>
+        `;
+      });
+      inputBodyHTML += `</div>`;
+    } else if (q.type === 'number') {
+      const val = this.answers[q.id] || '';
+      inputBodyHTML += `
+        <div class="q-input-row" style="max-width: 640px; margin: 0 auto 24px;">
+          <input type="number" class="q-form-input" data-question-id="${q.id}" min="${q.min || 0}" placeholder="${q.placeholder || ''}" value="${val}" />
+        </div>
+      `;
+    } else if (q.type === 'text') {
+      const val = this.answers[q.id] || '';
+      const inputType = q.inputType || 'text';
+      inputBodyHTML += `
+        <div class="q-input-row" style="max-width: 640px; margin: 0 auto 24px;">
+          <input type="${inputType}" class="q-form-input" data-question-id="${q.id}" placeholder="${q.placeholder || ''}" value="${val}" ${q.required ? 'required' : ''} />
+        </div>
+      `;
+    } else if (q.type === 'select' || q.type === 'search-select') {
+      inputBodyHTML += `
+        <div class="q-input-row" style="max-width: 640px; margin: 0 auto 24px;">
+          <select class="q-form-input q-select-custom" data-question-id="${q.id}">
+            <option value="">-- Sélectionnez une option --</option>
+            ${q.options.map(opt => `<option value="${opt.value}" ${this.answers[q.id] === opt.value ? 'selected' : ''}>${opt.label}</option>`).join('')}
+          </select>
+        </div>
+      `;
+    } else if (q.type === 'consent') {
+      const isChecked = !!this.answers[q.id];
+      inputBodyHTML += `
+        <div class="q-consent-box" style="max-width: 640px; margin: 0 auto 24px;">
+          <label class="q-consent-label">
+            <input type="checkbox" data-question-id="${q.id}" ${isChecked ? 'checked' : ''} ${q.required ? 'required' : ''} />
+            <span>${q.label}</span>
+          </label>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="q-question-block" id="q-block-${q.id}" ${hiddenStyle}>
+        <div class="q-question-header">
+          <div class="q-title-row">
+            ${isCorePrefix}
+            <h4 class="q-question-title">${q.title}</h4>
+            ${badgeHTML}
+          </div>
+          ${q.subtitle ? `<p class="q-question-sub">${q.subtitle}</p>` : ''}
+        </div>
+        ${inputBodyHTML}
+      </div>
+    `;
+  }
+
+  bindSectionInputs(container) {
+    // Single choice option cards
+    const singleCards = container.querySelectorAll('.q-option-card:not([data-multiple="true"])');
+    singleCards.forEach(card => {
+      card.addEventListener('click', () => {
+        const qId = card.dataset.questionId;
+        const val = card.dataset.value;
+        
+        // Deselect other cards for same question
+        container.querySelectorAll(`.q-option-card[data-question-id="${qId}"]`).forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        
+        this.answers[qId] = val;
+        this.reEvaluateConditionalQuestions();
+      });
+    });
+
+    // Multiple choice option cards
+    const multiCards = container.querySelectorAll('.q-option-card[data-multiple="true"]');
+    multiCards.forEach(card => {
+      card.addEventListener('click', () => {
+        const qId = card.dataset.questionId;
+        const val = card.dataset.value;
+        
+        if (!Array.isArray(this.answers[qId])) {
+          this.answers[qId] = [];
+        }
+
+        if (card.classList.contains('selected')) {
+          card.classList.remove('selected');
+          this.answers[qId] = this.answers[qId].filter(v => v !== val);
+        } else {
+          card.classList.add('selected');
+          this.answers[qId].push(val);
+        }
+
+        this.reEvaluateConditionalQuestions();
+      });
+    });
+
+    // Select dropdowns
+    const selects = container.querySelectorAll('select.q-form-input');
+    selects.forEach(select => {
+      select.addEventListener('change', () => {
+        const qId = select.dataset.questionId;
+        this.answers[qId] = select.value;
+        this.reEvaluateConditionalQuestions();
+      });
+    });
+
+    // Inputs (text, number, email)
+    const textInputs = container.querySelectorAll('input.q-form-input');
+    textInputs.forEach(input => {
+      input.addEventListener('input', () => {
+        const qId = input.dataset.questionId;
+        this.answers[qId] = input.value;
+        this.reEvaluateConditionalQuestions();
+      });
+    });
+
+    // Checkboxes (Consent)
+    const consentBoxes = container.querySelectorAll('.q-consent-box input[type="checkbox"]');
+    consentBoxes.forEach(box => {
+      box.addEventListener('change', () => {
+        const qId = box.dataset.questionId;
+        this.answers[qId] = box.checked;
+      });
+    });
+  }
+
+  reEvaluateConditionalQuestions() {
+    const activeSections = this.getActiveSections();
+    const currentSection = activeSections[this.currentSectionIndex];
+    if (!currentSection) return;
+
+    currentSection.questions.forEach(q => {
+      const block = document.getElementById(`q-block-${q.id}`);
+      if (!block) return;
+
+      const shouldBeVisible = this.isQuestionVisible(q);
+      if (shouldBeVisible) {
+        block.style.display = 'block';
+      } else {
+        block.style.display = 'none';
+        delete this.answers[q.id];
+      }
+    });
+  }
+
+  bindGlobalEvents() {
+    if (this.prevBtn) {
+      this.prevBtn.addEventListener('click', () => {
+        if (this.currentSectionIndex > 0) {
+          this.currentSectionIndex--;
+          this.renderCurrentSection();
+          this.scrollToQuestionnaireTop();
+        }
+      });
+    }
+
+    if (this.nextBtn) {
+      this.nextBtn.addEventListener('click', () => {
+        const activeSections = this.getActiveSections();
+        const currentSection = activeSections[this.currentSectionIndex];
+
+        // Validation for required questions in current section
+        const missingRequired = currentSection.questions.find(q => {
+          if (!q.required) return false;
+          if (!this.isQuestionVisible(q)) return false;
+          const val = this.answers[q.id];
+          if (val === undefined || val === null || val === '') return true;
+          if (Array.isArray(val) && val.length === 0) return true;
+          if (q.type === 'consent' && !val) return true;
+          return false;
+        });
+
+        if (missingRequired) {
+          alert(`Veuillez répondre à la question obligatoire : "${missingRequired.title}"`);
+          const block = document.getElementById(`q-block-${missingRequired.id}`);
+          if (block) {
+            block.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            block.classList.add('shake-highlight');
+            setTimeout(() => block.classList.remove('shake-highlight'), 600);
+          }
+          return;
+        }
+
+        if (this.currentSectionIndex < activeSections.length - 1) {
+          this.currentSectionIndex++;
+          this.renderCurrentSection();
+          this.scrollToQuestionnaireTop();
+        } else {
+          // Final section submitted!
+          this.handleFormSubmission();
+        }
+      });
     }
   }
 
-  shakeElement(el) {
-    el.style.animation = 'none';
-    // trigger reflow
-    void el.offsetWidth;
-    el.style.animation = 'shake 0.4s ease';
-    
-    // Add temporary shake animation keyframes dynamically if not present
-    if (!document.getElementById('shake-keyframes')) {
-      const style = document.createElement('style');
-      style.id = 'shake-keyframes';
-      style.textContent = `
-        @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          20%, 60% { transform: translateX(-6px); }
-          40%, 80% { transform: translateX(6px); }
-        }
-      `;
-      document.head.appendChild(style);
-    }
+  scrollToQuestionnaireTop() {
+    window.scrollTo({
+      top: this.form.offsetTop - 100,
+      behavior: 'smooth'
+    });
   }
 
   async handleFormSubmission() {
-    // 1. Save Lead in Database (Supabase / LocalStorage fallback)
-    await saveLeadDb(this.answers);
-    console.log("Lead captured successfully on eFactu:", this.answers);
+    this.nextBtn.disabled = true;
+    this.nextBtn.textContent = 'Calcul du classement...';
 
-    // 2. Run matching engine
+    // 1. Save lead in database
+    await saveLeadDb({
+      ...this.answers,
+      timestamp: new Date().toISOString(),
+      source: 'Questionnaire Détaillé 8 Sections'
+    });
+
+    // 2. Compute matching recommendations
     const recommendations = recommendPlatforms(this.answers);
 
-    // 3. Render Results Dashboard
+    // 3. Render official results restitution
     this.renderResultsDashboard(recommendations);
   }
 
   renderResultsDashboard(results) {
     const parentContainer = this.form.parentElement;
-    parentContainer.innerHTML = ''; // Clear questionnaire container
+    parentContainer.innerHTML = '';
     parentContainer.classList.add('results-mode');
-    
-    // Create Results Wrapper
+
+    const topResults = results.slice(0, 5);
+    const currentDate = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+
     const resultsDiv = document.createElement('div');
     resultsDiv.className = 'results-dashboard';
 
-    // Labels mapping for recap
-    const statusLabels = {
-      'micro-entreprise': 'Micro-entreprise',
-      'SAS': 'SAS / SASU',
-      'SARL': 'SARL / EURL',
-      'association': 'Association',
-      'autre': 'Autre statut'
-    };
+    // Header with official DGFiP date
+    const headerHTML = `
+      <div class="results-header-box" style="text-align: center; margin-bottom: 40px; padding: 36px 24px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: var(--radius-xl); box-shadow: 0 10px 30px rgba(0,0,0,0.03);">
+        <div style="display: inline-flex; align-items: center; gap: 8px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; font-size: 13px; font-weight: 800; padding: 6px 16px; border-radius: 20px; margin-bottom: 16px;">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+          Audit et sélection conformes DGFiP
+        </div>
+        <h2 style="font-size: 30px; font-weight: 900; color: #0b132b; margin-bottom: 12px;">Rapport de sélection des Plateformes Agréées (PA)</h2>
+        <p style="color: #64748b; max-width: 680px; margin: 0 auto 16px; font-size: 15px;">
+          Classement établi sur la base de vos critères d'architecture, connecteurs logiciels, volumes de flux et obligations légales de la réforme.
+        </p>
+        <p style="font-size: 12px; color: #94a3b8; margin: 0;">
+          Données mises à jour au <strong>15 août 2026</strong> — Source officielle : <a href="https://www.impots.gouv.fr/partenaire-de-dematerialisation" target="_blank" style="color: #0d9488; text-decoration: underline;">Annuaire DGFiP des Plateformes Agréées</a>.
+        </p>
+      </div>
+    `;
 
-    const volumeLabels = {
-      'less-50': 'Moins de 50 factures/mois',
-      '50-200': '50 à 200 factures/mois',
-      '200-500': '200 à 500 factures/mois',
-      '500-1000': '500 à 1000 factures/mois',
-      'plus-1000': 'Plus de 1000 factures/mois'
-    };
-
-    const softwareLabels = {
-      'none': 'Aucun outil',
-      'excel': 'Excel / Papier',
-      'sage': 'Sage',
-      'pennylane': 'Pennylane',
-      'ebp': 'EBP',
-      'cegid': 'Cegid',
-      'odoo': 'Odoo',
-      'sellsy': 'Sellsy',
-      'autre': 'Autre outil'
-    };
-
-    const budgetLabels = {
-      'free': 'Gratuit uniquement',
-      'less-20': '< 20€/mois',
-      '20-50': '20€ à 50€/mois',
-      '50-100': '50€ à 100€/mois',
-      'plus-100': '> 100€/mois'
-    };
-
-    const recapHTML = `
-      <div class="results-header-box">
-        <h2>Voici votre sélection personnalisée</h2>
-        <p>Nous avons comparé les critères de votre entreprise avec les Plateformes Agréées (PAFE/PDP) de notre base de données.</p>
-        <div class="results-recap-tags">
-          <span class="results-recap-tag">${statusLabels[this.answers.status] || this.answers.status}</span>
-          <span class="results-recap-tag">${volumeLabels[this.answers.volume] || this.answers.volume}</span>
-          <span class="results-recap-tag">Logiciel : ${softwareLabels[this.answers.software] || this.answers.software}</span>
-          <span class="results-recap-tag">Budget : ${budgetLabels[this.answers.budget] || this.answers.budget}</span>
-          <span class="results-recap-tag">Accompagnement : ${this.answers.assistance === 'oui' ? 'Oui' : 'Non'}</span>
+    // Action buttons bar: Download PDF + Export Excel
+    const actionsBarHTML = `
+      <div class="results-export-bar" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 30px; padding: 18px 24px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-lg);">
+        <div style="font-size: 14px; font-weight: 700; color: #1e293b;">
+          ${results.length} Plateformes Agréées analysées pour votre entreprise
+        </div>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <button id="btn-export-pdf" class="btn btn-primary btn-sm" style="font-weight: 700;">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            Télécharger le Rapport (PDF)
+          </button>
+          <button id="btn-export-csv" class="btn btn-outline btn-sm" style="font-weight: 700;">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 2v-6m-8-3h7a2 2 0 012 2v9a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2z"/></svg>
+            Exporter le Tableau (Excel / CSV)
+          </button>
         </div>
       </div>
     `;
 
+    // Cards list
     let cardsHTML = `<div class="platform-results-list">`;
-    
-    results.forEach((platform, index) => {
-      const isTopResult = index === 0;
-      const cardClass = isTopResult ? 'platform-card recommended-card' : 'platform-card';
-      
-      const score = platform.compatibilityScore;
-      let scoreColorClass = 'score-low';
-      if (score >= 85) scoreColorClass = 'score-high';
-      else if (score >= 60) scoreColorClass = 'score-medium';
 
-      // Pros list
-      let prosHTML = '';
-      platform.advantages.forEach(adv => {
-        prosHTML += `
-          <div class="pro-con-item pro-item">
-            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-            <span>${adv}</span>
-          </div>
-        `;
-      });
+    topResults.forEach((platform, index) => {
+      const isTop = index === 0;
+      const cardClass = isTop ? 'platform-card recommended-card' : 'platform-card';
+      const statusBadge = platform.statusType === 'immatricule'
+        ? `<span class="badge" style="background-color: #dcfce7; color: #166534; font-weight: 800; font-size: 11px; padding: 4px 8px; border-radius: 4px;">✓ ${platform.statusLabel} (${platform.registrationNumber})</span>`
+        : `<span class="badge" style="background-color: #fef9c3; color: #854d0e; font-weight: 800; font-size: 11px; padding: 4px 8px; border-radius: 4px;">⏳ ${platform.statusLabel}</span>`;
 
-      // Cons list
-      let consHTML = '';
-      platform.disadvantages.forEach(dis => {
-        consHTML += `
-          <div class="pro-con-item con-item">
-            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
-            <span>${dis}</span>
-          </div>
-        `;
-      });
+      // Matched Criteria List
+      const matchedItemsHTML = (platform.matchedCriteria || []).map(c => `
+        <li style="display: flex; align-items: flex-start; gap: 8px; font-size: 13.5px; color: #1e293b; margin-bottom: 6px;">
+          <span style="color: #10b981; font-weight: bold; flex-shrink: 0;">✓</span>
+          <span>${c}</span>
+        </li>
+      `).join('');
 
-      // Features details check grid
-      const featsNeeded = this.answers.features || [];
-      const featuresToCheck = [
-        { key: 'eInvoicing', label: 'Émission Factures' },
-        { key: 'receiving', label: 'Réception Factures' },
-        { key: 'payment', label: 'Paiement Intégré' },
-        { key: 'signature', label: 'Signature Élec.' },
-        { key: 'reminders', label: 'Relance Impayés' },
-        { key: 'api', label: 'API Connecteurs' },
-        { key: 'multiUser', label: 'Multi-utilisateurs' },
-        { key: 'quotes', label: 'Gestion Devis' },
-        { key: 'accountingSync', label: 'Synchro Bancaire' }
-      ];
-
-      let checksHTML = '<div class="features-check-grid">';
-      featuresToCheck.forEach(ft => {
-        const supported = platform.features[ft.key] === true;
-        const checkIcon = supported 
-          ? `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>`
-          : `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>`;
-        
-        checksHTML += `
-          <div class="check-item ${supported ? 'active' : 'inactive'}">
-            ${checkIcon}
-            <span>${ft.label}</span>
-          </div>
-        `;
-      });
-      checksHTML += '</div>';
-
-      // Stars Rating
-      let starsHTML = '';
-      const fullStars = Math.floor(platform.rating);
-      const halfStar = platform.rating % 1 >= 0.5;
-      for (let s = 1; s <= 5; s++) {
-        if (s <= fullStars) {
-          starsHTML += `<svg viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>`;
-        } else {
-          starsHTML += `<svg viewBox="0 0 20 20" style="color: #e2e8f0;"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>`;
-        }
-      }
+      // Vigilance points if any
+      const vigilanceItemsHTML = (platform.vigilancePoints && platform.vigilancePoints.length > 0) ? `
+        <div style="margin-top: 12px; padding: 10px 14px; background: #fffbeb; border: 1px solid #fef3c7; border-radius: 6px;">
+          <span style="font-size: 12px; font-weight: 800; color: #b45309; text-transform: uppercase;">Points de vigilance :</span>
+          <ul style="margin: 4px 0 0; padding-left: 16px; font-size: 12.5px; color: #92400e;">
+            ${platform.vigilancePoints.map(v => `<li>${v}</li>`).join('')}
+          </ul>
+        </div>
+      ` : '';
 
       cardsHTML += `
-        <div class="${cardClass}">
-          ${isTopResult ? `<div class="recommended-ribbon"><span class="badge badge-recommended">★ Recommandé</span></div>` : ''}
-          
-          <!-- Column 1: Logo & Name -->
-          <div class="platform-col-logo">
-            ${platform.logo}
-            <h4 class="platform-name">${platform.name}</h4>
-            <div style="margin-top: 8px; display: flex; flex-direction: column; align-items: center; gap: 4px;">
-              <div class="rating-stars">${starsHTML}</div>
-              <span style="font-size: 13px; font-weight: 700; color: var(--text-muted);">${platform.rating} / 5</span>
-            </div>
-          </div>
-          
-          <!-- Column 2: Strengths & Weaknesses -->
-          <div class="platform-col-content">
-            <p class="platform-description">${platform.description}</p>
-            
-            <div class="platform-pros-cons">
-              <div>
-                <span style="font-size: 13px; font-weight: 800; text-transform: uppercase; color: var(--text-dark); display: block; margin-bottom: 8px;">Avantages</span>
-                ${prosHTML}
-              </div>
-              <div>
-                <span style="font-size: 13px; font-weight: 800; text-transform: uppercase; color: var(--text-dark); display: block; margin-bottom: 8px;">Limites</span>
-                ${consHTML}
-              </div>
-            </div>
-            
+        <div class="${cardClass}" style="margin-bottom: 24px; padding: 32px; background: #ffffff; border: 2px solid ${isTop ? '#10b981' : '#e2e8f0'}; border-radius: var(--radius-xl); box-shadow: 0 10px 30px rgba(0,0,0,0.04);">
+          ${isTop ? `<div style="margin-bottom: 12px;"><span class="badge badge-recommended" style="background: #10b981; color: white; padding: 4px 12px; font-weight: 800; border-radius: 6px;">★ Recommandation n°1</span></div>` : ''}
+
+          <div style="display: grid; grid-template-columns: 240px 1fr 200px; gap: 32px; align-items: start;">
+            <!-- Column 1: Logo & Identity -->
             <div>
-              <button class="platform-accordion-trigger">
-                <span>Détails des fonctionnalités</span>
-                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
-              </button>
-              <div class="platform-accordion-content">
-                ${checksHTML}
+              <div style="width: 70px; height: 70px; margin-bottom: 12px;">${platform.logo}</div>
+              <h3 style="font-size: 20px; font-weight: 800; color: #0b132b; margin: 0 0 6px;">${platform.name}</h3>
+              <div style="margin-bottom: 8px;">${statusBadge}</div>
+              <div style="font-size: 14px; font-weight: 700; color: #64748b;">${platform.priceLabel}</div>
+            </div>
+
+            <!-- Column 2: Criteria Explaining Ranking -->
+            <div>
+              <h4 style="font-size: 14px; font-weight: 800; text-transform: uppercase; color: #0d9488; letter-spacing: 0.5px; margin: 0 0 10px;">
+                Critères justifiant ce classement :
+              </h4>
+              <ul style="list-style: none; padding: 0; margin: 0;">
+                ${matchedItemsHTML}
+              </ul>
+              ${vigilanceItemsHTML}
+            </div>
+
+            <!-- Column 3: Score & Link -->
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-lg); padding: 20px;">
+              <div style="font-size: 32px; font-weight: 900; color: #10b981; line-height: 1;">
+                ${platform.compatibilityScore}%
               </div>
+              <span style="font-size: 12px; font-weight: 700; color: #64748b; margin-top: 4px; margin-bottom: 16px;">Indice d'adéquation</span>
+              <a href="${platform.url}" target="_blank" class="btn btn-primary btn-sm" style="width: 100%; font-weight: 700;">
+                Consulter l'offre
+              </a>
             </div>
-          </div>
-          
-          <!-- Column 3: Score & Action Button -->
-          <div class="platform-col-actions">
-            <div class="platform-score-wrapper">
-              <div class="platform-score-circle ${scoreColorClass}">
-                ${score}%
-              </div>
-              <span class="platform-score-label">Compatibilité</span>
-            </div>
-            
-            <div class="platform-price-label">
-              ${platform.priceLabel}
-            </div>
-            
-            <a href="${platform.url}" target="_blank" class="btn btn-secondary btn-sm" style="width: 100%;">
-              Découvrir l'offre
-            </a>
           </div>
         </div>
       `;
@@ -718,26 +474,80 @@ class QuestionnaireController {
 
     cardsHTML += `</div>`;
 
-    const trustElementsHTML = `
-      <div class="text-center" style="margin-top: 60px;">
-        <h3 style="font-size: 24px; font-weight: 800; margin-bottom: 12px; color: var(--primary-deep);">Besoin d'aide pour finaliser votre choix ?</h3>
-        <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 30px;">Nos conseillers experts en facturation électronique vous accompagnent gratuitement pour installer et configurer votre plateforme.</p>
-        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-          <a href="/contact.html" class="btn btn-primary">Être recontacté par un conseiller</a>
-          <button onclick="window.print()" class="btn btn-outline" style="border-color: #cbd5e1; color: var(--text-main);">
-            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-3a2 2 0 00-2-2H9a2 2 0 00-2 2v3a2 2 0 002 2zm0-9a9 9 0 0118 0v4H3v-4z"/></svg> Imprimer mes résultats
-          </button>
+    // Methodology link footer
+    const footerHTML = `
+      <div style="margin-top: 50px; text-align: center; padding: 30px; background: #f8fafc; border-radius: var(--radius-lg); border: 1px solid #e2e8f0;">
+        <h4 style="font-size: 17px; font-weight: 800; color: #0b132b; margin-bottom: 8px;">Transparence et Indépendance de Notation</h4>
+        <p style="font-size: 14px; color: #64748b; max-width: 640px; margin: 0 auto 16px;">
+          eFactu est un comparateur tiers indépendant. Nos algorithmes d'adéquation évaluent les offres sans affiliation commerciale, sur la base des connecteurs vérifiés et des critères déclarés par les éditeurs.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px;">
+          <a href="/methodologie.html" class="btn btn-outline btn-sm">Consulter notre méthodologie complète</a>
+          <button id="btn-restart-quiz" class="btn btn-outline btn-sm">Recommencer une simulation</button>
         </div>
       </div>
     `;
 
-    resultsDiv.innerHTML = recapHTML + cardsHTML + trustElementsHTML;
+    resultsDiv.innerHTML = headerHTML + actionsBarHTML + cardsHTML + footerHTML;
     parentContainer.appendChild(resultsDiv);
-    
+
+    // Bind Result Action Events
+    this.bindResultActions(results);
+
     // Scroll to results top
     window.scrollTo({
-      top: parentContainer.offsetTop - 120,
+      top: parentContainer.offsetTop - 80,
       behavior: 'smooth'
     });
+  }
+
+  bindResultActions(results) {
+    const btnPdf = document.getElementById('btn-export-pdf');
+    if (btnPdf) {
+      btnPdf.addEventListener('click', () => {
+        window.print();
+      });
+    }
+
+    const btnCsv = document.getElementById('btn-export-csv');
+    if (btnCsv) {
+      btnCsv.addEventListener('click', () => {
+        this.exportResultsToCSV(results);
+      });
+    }
+
+    const btnRestart = document.getElementById('btn-restart-quiz');
+    if (btnRestart) {
+      btnRestart.addEventListener('click', () => {
+        window.location.reload();
+      });
+    }
+  }
+
+  exportResultsToCSV(results) {
+    let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+    csvContent += "Rang;Plateforme;Statut DGFIP;Immatriculation;Score Adequation (%);Prix Base;Criteres Valides\r\n";
+
+    results.forEach((p, idx) => {
+      const row = [
+        idx + 1,
+        p.name,
+        p.statusLabel,
+        p.registrationNumber || 'En cours',
+        p.compatibilityScore,
+        p.priceLabel,
+        (p.matchedCriteria || []).join(' | ')
+      ].map(val => `"${String(val).replace(/"/g, '""')}"`).join(';');
+
+      csvContent += row + "\r\n";
+    });
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `efactu_classement_plateformes_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 }

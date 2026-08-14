@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Qu'est-ce qu'une PDP et différences avec Chorus Pro - eFactu</title>
-  <meta name="description" content="Découvrez le rôle d'une Plateforme de Dématérialisation Partenaire (PDP) et ses différences fondamentales avec le Portail Public (PPF) gratuit." />
+  <title>Qu'est-ce qu'une Plateforme Agréée (PA) et comment la choisir ? - eFactu</title>
+  <meta name="description" content="Comprendre le rôle des Plateformes Agréées (PA) de facturation électronique (ex-PDP) immatriculées par la DGFiP, critères de sélection, connecteurs et tarifs." />
   
   <!-- CSS files -->
   <link rel="stylesheet" href="/src/css/main.css" />
@@ -32,7 +32,7 @@
         {
           "@type": "ListItem",
           "position": 3,
-          "name": "Guide PDP",
+          "name": "Guide Plateformes Agréées",
           "item": "https://efactu.fr/guides/guide-pdp.html"
         }
       ]
@@ -62,7 +62,8 @@
         <a href="/index.html" class="nav-link">Accueil</a>
         <a href="/comment-ca-marche.html" class="nav-link">Comment ça fonctionne</a>
         <a href="/comparatif.html" class="nav-link">Comparatif</a>
-        <a href="/guides/index.html" class="nav-link">Guides Réforme</a>
+        <a href="/methodologie.html" class="nav-link">Méthodologie</a>
+        <a href="/guides/index.html" class="nav-link active">Guides Réforme</a>
         <a href="/faq.html" class="nav-link">FAQ</a>
         <a href="/contact.html" class="nav-link">Contact</a>
       </nav>
@@ -87,66 +88,56 @@
             <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
             Retour aux guides
           </a>
-          <h1 class="article-title">Qu'est-ce qu'une PDP et comment la choisir ?</h1>
+          <h1 class="article-title">Qu'est-ce qu'une Plateforme Agréée (PA) et comment la choisir ?</h1>
           <div class="article-meta">
             <span>Par L'Équipe eFactu</span>
             <span>&bull;</span>
             <span>Temps de lecture : 5 min</span>
             <span>&bull;</span>
-            <span>Mis à jour le 4 Juillet 2026</span>
+            <span>Données DGFiP au 15 août 2026</span>
           </div>
         </header>
 
         <div class="article-body">
-          <p>Dans le cadre de la réforme de la facturation électronique obligatoire en France, deux termes reviennent constamment : le <strong>PPF (Portail Public de Facturation)</strong> et les <strong>PDP (Plateformes de Dématérialisation Partenaires)</strong>. Mais que signifient réellement ces acronymes et quelle solution convient le mieux à votre activité ? Suivez notre guide pour comprendre leurs différences fondamentales.</p>
+          <p>La terminologie officielle de la réforme de la facturation électronique a été précisée : le terme <strong>Plateforme Agréée (PA)</strong> (anciennement désignée sous l'acronyme PDP) désigne les opérateurs privés immatriculés par l'administration fiscale (DGFiP) pour assurer la transmission sécurisée des factures et des données d'e-reporting.</p>
 
-          <h2>Qu'est-ce qu'une PDP ?</h2>
-          <p>Une <strong>Plateforme de Dématérialisation Partenaire (PDP)</strong> est un prestataire de services privé officiellement immatriculé par la Direction Générale des Finances Publiques (DGFiP). Pour obtenir cet agrément étatique très sélectif, l'opérateur doit répondre à un cahier des charges de sécurité drastique (notamment la certification ISO 27001 et le respect de la norme de sécurité SecNumCloud).</p>
-          <p>Les PDP sont habilitées à :</p>
+          <h2>Qu'est-ce qu'une Plateforme Agréée (PA) ?</h2>
+          <p>Une <strong>Plateforme Agréée</strong> est un tiers de confiance accrédité et contrôlé par la DGFiP. Pour obtenir son immatriculation officielle (délivrée sous réserve d'un audit de conformité de 12 mois), la plateforme doit justifier de standards de sécurité drastiques (certification ISO 27001, hébergement souverain européen conforme au RGPD).</p>
+          <p>Les Plateformes Agréées assurent les missions régaliennes et techniques suivantes :</p>
           <ul>
-            <li>Émettre et recevoir des factures électroniques structurées (Factur-X, UBL, CII) directement auprès de leurs clients.</li>
-            <li>Extraire et transmettre automatiquement les données de facturation obligatoires à l'État (le *e-reporting* de TVA).</li>
-            <li>Vérifier la validité réglementaire des factures échangées (conformité des mentions légales obligatoires).</li>
-            <li>Mettre à jour l'annuaire centralisé des entreprises françaises géré par l'État.</li>
+            <li><strong>Émission et réception sécurisées :</strong> Acheminement direct des factures au format structuré (Factur-X, UBL, CII) entre émetteur et destinataire.</li>
+            <li><strong>Contrôle de conformité :</strong> Vérification automatique des mentions fiscales obligatoires et de l'existence des numéros SIREN dans l'annuaire national.</li>
+            <li><strong>Transmission des données fiscales :</strong> Extraction et envoi automatisé des données d'e-invoicing et d'e-reporting vers la DGFiP.</li>
+            <li><strong>Gestion des statuts obligatoires :</strong> Synchronisation des 4 statuts réglementaires (Déposée, Rejetée, Refusée, Encaissée).</li>
           </ul>
 
-          <h2>PDP vs PPF : La comparaison</h2>
-          <p>Le Portail Public de Facturation (PPF) est l'outil minimal gratuit développé par l'État pour gérer le socle de la réforme. Comparons le PPF et une PDP privée :</p>
-
-          <h3>1. Le coût d'utilisation</h3>
-          <p><strong>PPF :</strong> 100% gratuit. Il n'y a aucun abonnement ni coût par facture envoyée.</p>
-          <p><strong>PDP :</strong> Payant. Il s'agit généralement d'un abonnement mensuel (allant de 15€ à plus de 150€ par mois) ou d'une tarification au volume de factures traitées.</p>
-
-          <h3>2. Les services associés</h3>
-          <p><strong>PPF :</strong> Minimaliste. Le PPF se concentre uniquement sur le dépôt, la saisie et la réception basiques de factures. Il ne propose aucun outil de gestion commerciale, pas de signature électronique de contrat, pas de relances d'impayés, et pas de synchronisation bancaire.</p>
-          <p><strong>PDP :</strong> Très complets. Les PDP sont conçues pour améliorer la productivité des entreprises. Elles intègrent de la reconnaissance automatique de factures par IA (OCR), la synchronisation en temps réel avec votre expert-comptable, le paiement intégré de factures fournisseurs en un clic, et des workflows de validation collaborative par direction.</p>
-
-          <h3>3. L'intégration technique (API)</h3>
-          <p><strong>PPF :</strong> Connexion par portail web ou API standardisée de l'État (qui peut s'avérer complexe et rigide pour des ERP sur-mesure).</p>
-          <p><strong>PDP :</strong> Proposent des API modernes et ouvertes, des connecteurs natifs avec les logiciels du marché (Sage, Cegid, SAP, Odoo, Pennylane) facilitant une intégration transparente dans votre comptabilité.</p>
-
-          <h2>Faut-il choisir le PPF ou une PDP ?</h2>
-          <p>Le choix dépend principalement de la taille et de la maturité numérique de votre structure :</p>
-          
-          <h3>Le Portail Public (PPF) est recommandé si :</h3>
+          <h2>Distinction : Plateforme Immatriculée vs Candidate</h2>
+          <p>Sur le marché, il convient de distinguer clairement deux situations administratives :</p>
           <ul>
-            <li>Vous êtes micro-entrepreneur ou dirigez une très petite association.</li>
-            <li>Votre volume de factures de vente et d'achat est très faible (moins de 20 par mois).</li>
-            <li>Vous cherchez la solution la plus économique possible et êtes prêt à saisir manuellement vos données sur le portail de l'État.</li>
+            <li><strong>Plateforme Agréée Immatriculée (sous réserve d'audit) :</strong> L'opérateur a reçu son numéro d'immatriculation officiel de la DGFiP (ex: <em>PA-2024-XXXX</em>) et est habilité à tester et opérer les flux dès la phase pilote.</li>
+            <li><strong>Plateforme Candidate :</strong> L'éditeur a déposé son dossier de candidature auprès de l'administration et prépare son raccordement technique en vue de l'immatriculation.</li>
           </ul>
 
-          <h3>Une PDP est recommandée si :</h3>
+          <h2>Le rôle du Portail Public de Facturation (PPF)</h2>
+          <p>Contrairement aux premières annonces du projet, le portail public (PPF) n'assure plus un rôle de plateforme de facturation commerciale concurrente des acteurs privés. Son périmètre est concentré sur :</p>
           <ul>
-            <li>Vous êtes une PME ou ETI avec de nombreux collaborateurs.</li>
-            <li>Vous gérez des dizaines ou centaines de factures fournisseurs par mois et souhaitez automatiser leur saisie comptable (OCR/IA).</li>
-            <li>Vous utilisez déjà un logiciel ERP ou de gestion commerciale et souhaitez éviter les doubles saisies.</li>
-            <li>Vous souhaitez proposer le paiement en ligne intégré de vos factures clients pour réduire vos délais de paiement.</li>
+            <li>La tenue de l'<strong>Annuaire National</strong> recensant la plateforme choisie par chaque entreprise.</li>
+            <li>La <strong>concentration des données fiscales</strong> et leur transmission à la DGFiP.</li>
           </ul>
+
+          <h2>Les 5 critères indispensables pour choisir votre Plateforme Agréée</h2>
+          <ol>
+            <li><strong>La compatibilité avec vos outils :</strong> Votre logiciel de facturation, caisse (POS), ERP ou PMS hôtelier doit disposer d'un connecteur natif ou d'une API ouverte.</li>
+            <li><strong>La gestion des spécificités sectorielles :</strong> Multi-taux de TVA sur une facture, ventilation de la taxe de séjour, circuits de validation multi-niveaux.</li>
+            <li><strong>L'accès dédié expert-comptable :</strong> Permet à votre cabinet de récupérer directement les écritures comptables sans manipulations manuelles.</li>
+            <li><strong>L'archivage à valeur probante (10 ans) :</strong> Garantie de conservation scellée conforme à la norme NF Z42-013.</li>
+            <li><strong>La transparence tarifaire et le support :</strong> Évaluez le coût réel par rapport à votre volume annuel et assurez-vous d'un support réactif en français.</li>
+          </ol>
 
           <div class="article-cta-box">
-            <h3>Analysez vos besoins avec notre algorithme</h3>
-            <p>Remplissez le questionnaire pour savoir si le PPF suffit à votre entreprise ou si l'accompagnement par une PDP est préférable.</p>
-            <a href="/index.html#comparator" class="btn btn-primary">Lancer le comparateur</a>
+            <h3>Identifiez la plateforme compatible avec vos logiciels</h3>
+            <p>Notre algorithme multicritères filtre les solutions selon vos connecteurs réels et votre secteur d'activité.</p>
+            <a href="/index.html#comparator" class="btn btn-primary">Lancer le comparateur d'adéquation</a>
           </div>
         </div>
       </div>
@@ -165,15 +156,16 @@
             </svg>
             <span style="color: white;">e<span style="color: var(--accent);">Factu</span></span>
           </div>
-          <p>Le comparateur indépendant de référence pour trouver votre plateforme de facturation électronique obligatoire (PDP/PAFE) en France.</p>
+          <p>Le comparateur indépendant de référence pour trouver votre Plateforme Agréée (PA) en France.</p>
         </div>
         
         <div>
           <h3>Navigation</h3>
           <ul class="footer-links">
             <li><a href="/index.html">Accueil</a></li>
-            <li><a href="/comment-ca-marche.html">Comment ça marche</a></li>
+            <li><a href="/comment-ca-marche.html">Comment ça fonctionne</a></li>
             <li><a href="/comparatif.html">Tableau Comparatif</a></li>
+            <li><a href="/methodologie.html">Méthodologie</a></li>
             <li><a href="/guides/index.html">Guides Réforme</a></li>
             <li><a href="/faq.html">FAQ</a></li>
           </ul>
@@ -183,7 +175,8 @@
           <h3>Légal</h3>
           <ul class="footer-links">
             <li><a href="/mentions-legales.html">Mentions Légales</a></li>
-            <li><a href="/politique-confidentialite.html">Confidentialité</a></li>
+            <li><a href="/politique-confidentialite.html">Confidentialité & RGPD</a></li>
+            <li><a href="/methodologie.html">Méthodologie de notation</a></li>
             <li><a href="/contact.html">Nous Contacter</a></li>
             <li><a href="/admin.html">Administration</a></li>
           </ul>
@@ -199,7 +192,7 @@
       </div>
       
       <div class="footer-bottom">
-        <p>&copy; 2026 eFactu. Tous droits réservés.</p>
+        <p>&copy; 2026 eFactu. Données DGFiP mises à jour au 15 août 2026.</p>
         <div class="footer-legal-links">
           <a href="/mentions-legales.html">Mentions légales</a>
           <a href="/politique-confidentialite.html">Protection des données</a>

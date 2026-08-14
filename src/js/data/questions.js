@@ -1,205 +1,1193 @@
 import { getCachedQuestions, saveQuestionsDb } from './db.js';
 
-export const defaultQuestions = [
+export const questionnaireSections = [
   {
-    step: 1,
-    id: "status",
-    title: "Quel est votre statut juridique ?",
-    subtitle: "Cela nous aide à filtrer les plateformes adaptées à votre structure.",
-    type: "single",
-    required: true,
-    options: [
+    id: "A",
+    title: "Section A · Périmètre de l'entreprise",
+    description: "Identifions la structure juridique et la taille de votre organisation pour définir vos obligations calendaires et multi-entités.",
+    questions: [
       {
-        value: "micro-entreprise",
-        label: "Micro-entreprise / Auto-entrepreneur",
-        icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>`
+        number: 1,
+        id: "company_category",
+        isCore: true,
+        role: "filtre",
+        roleLabel: "Filtre échéance",
+        title: "Catégorie de l'entreprise au sens de la réforme",
+        subtitle: "Détermine votre calendrier d'obligation d'émission (2026 ou 2027).",
+        type: "single",
+        required: true,
+        options: [
+          { value: "micro", label: "Micro-entreprise / Auto-entrepreneur", desc: "Chiffre d'affaires selon seuils du régime micro" },
+          { value: "tpe", label: "Très Petite Entreprise (TPE)", desc: "< 10 salariés et CA / bilan < 2 M€" },
+          { value: "pme", label: "Petite ou Moyenne Entreprise (PME)", desc: "< 250 salariés et CA < 50 M€" },
+          { value: "eti", label: "Entreprise de Taille Intermédiaire (ETI)", desc: "250 à 4 999 salariés ou CA < 1,5 Md€" },
+          { value: "ge", label: "Grande Entreprise (GE)", desc: "≥ 5 000 salariés ou CA > 1,5 Md€" }
+        ]
       },
       {
-        value: "SAS",
-        label: "SAS / SASU",
-        icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>`
+        number: 2,
+        id: "headcount",
+        isCore: true,
+        role: "ponderation",
+        roleLabel: "Pondération",
+        title: "Effectif de l'entreprise",
+        subtitle: "Nombre de collaborateurs au sein de votre structure.",
+        type: "single",
+        required: true,
+        options: [
+          { value: "less_10", label: "Moins de 10 salariés" },
+          { value: "10_49", label: "10 à 49 salariés" },
+          { value: "50_249", label: "50 à 249 salariés" },
+          { value: "250_4999", label: "250 à 4 999 salariés" },
+          { value: "plus_5000", label: "5 000 salariés ou plus" }
+        ]
       },
       {
-        value: "SARL",
-        label: "SARL / EURL",
-        icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>`
+        number: 3,
+        id: "annual_revenue",
+        isCore: true,
+        role: "ponderation",
+        roleLabel: "Pondération",
+        title: "Chiffre d'affaires annuel",
+        subtitle: "Montant annuel approximatif du chiffre d'affaires hors taxes.",
+        type: "single",
+        required: true,
+        options: [
+          { value: "less_2m", label: "Moins de 2 M€" },
+          { value: "2m_10m", label: "2 à 10 M€" },
+          { value: "10m_50m", label: "10 à 50 M€" },
+          { value: "plus_50m", label: "Plus de 50 M€" }
+        ]
       },
       {
-        value: "association",
-        label: "Association",
-        icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>`
+        number: 4,
+        id: "company_structure",
+        isCore: true,
+        role: "filtre",
+        roleLabel: "Filtre multi-entités",
+        title: "Structure de l'entreprise",
+        subtitle: "Votre entité comporte-t-elle plusieurs établissements ou sociétés ?",
+        type: "single",
+        required: true,
+        options: [
+          { value: "mono", label: "Mono-établissement (Une seule structure / un seul site)" },
+          { value: "multi_etab", label: "Plusieurs établissements (Une seule société avec plusieurs SIRET)" },
+          { value: "multi_siren", label: "Groupe de plusieurs sociétés (Plusieurs SIREN distincts)" }
+        ]
       },
       {
-        value: "autre",
-        label: "Autre statut",
-        icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`
+        number: 5,
+        id: "siren_count",
+        isCore: false,
+        role: "filtre",
+        roleLabel: "Filtre",
+        title: "Nombre de sociétés françaises (numéros SIREN distincts)",
+        subtitle: "Indiquez le nombre de filiales ou entités juridiques à interconnecter.",
+        type: "number",
+        placeholder: "Ex: 3",
+        min: 1,
+        condition: { field: "company_structure", value: "multi_siren" }
+      },
+      {
+        number: 6,
+        id: "etab_count",
+        isCore: false,
+        role: "ponderation",
+        roleLabel: "Pondération",
+        title: "Nombre total d'établissements (SIRET)",
+        subtitle: "Nombre total de sites ou points de vente secondaires.",
+        type: "number",
+        placeholder: "Ex: 5",
+        min: 1,
+        condition: { field: "company_structure", in: ["multi_etab", "multi_siren"] }
+      },
+      {
+        number: 7,
+        id: "vat_group",
+        isCore: true,
+        role: "filtre",
+        roleLabel: "Filtre échéance",
+        title: "Société membre d'un assujetti unique (Groupe TVA)",
+        subtitle: "L'assujetti unique impose la mise en conformité dès le 1er septembre 2026.",
+        type: "single",
+        required: true,
+        options: [
+          { value: "oui", label: "Oui (Membre d'un assujetti unique / Groupe TVA)" },
+          { value: "non", label: "Non" },
+          { value: "je_ne_sais_pas", label: "Je ne sais pas" }
+        ]
+      },
+      {
+        number: 8,
+        id: "foreign_branches",
+        isCore: false,
+        role: "ponderation",
+        roleLabel: "Pondération",
+        title: "Établissements situés hors de France",
+        subtitle: "Disposez-vous de succursales ou filiales à l'international ?",
+        type: "single",
+        condition: { field: "company_structure", in: ["multi_etab", "multi_siren"] },
+        options: [
+          { value: "oui", label: "Oui" },
+          { value: "non", label: "Non" }
+        ]
+      },
+      {
+        number: 9,
+        id: "target_date",
+        isCore: true,
+        role: "filtre",
+        roleLabel: "Filtre délai",
+        title: "Date cible de mise en conformité",
+        subtitle: "Votre horizon souhaité de bascule et d'opérationnalité.",
+        type: "single",
+        required: true,
+        options: [
+          { value: "sept_2026", label: "Septembre 2026 (Obligation légale de réception & émission GE/ETI)" },
+          { value: "sept_2027", label: "Septembre 2027 (Échéance finale d'émission TPE/PME)" },
+          { value: "asap", label: "Le plus tôt possible (Phase pilote / anticipation)" }
+        ]
       }
     ]
   },
   {
-    step: 2,
-    id: "volume",
-    title: "Combien de factures envoyez-vous par mois ?",
-    subtitle: "Estimez le nombre de factures de vente (clients) émises mensuellement.",
-    type: "single",
-    required: true,
-    options: [
+    id: "B",
+    title: "Section B · Activité et nature des flux",
+    description: "Analysons vos flux de facturation (B2B, B2C, B2G, international) et vos volumes annuels.",
+    questions: [
       {
-        value: "less-50",
-        label: "Moins de 50 factures",
-        icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>`
+        number: 10,
+        id: "sector",
+        isCore: true,
+        role: "filtre",
+        roleLabel: "Filtre section H",
+        title: "Secteur d'activité principal",
+        subtitle: "Certains secteurs (ex: hôtellerie-restauration) possèdent des contraintes métiers fortes.",
+        type: "select",
+        required: true,
+        options: [
+          { value: "hotellerie_restauration", label: "Hôtellerie - Restauration & Hébergement" },
+          { value: "batiment_btp", label: "Bâtiment, BTP & Artisans" },
+          { value: "commerce_retail", label: "Commerce de détail, E-commerce & Distribution" },
+          { value: "services_conseil", label: "Services, Conseil & Prestations intellectuelles" },
+          { value: "industrie_transport", label: "Industrie, Logistique & Transport" },
+          { value: "sante_medical", label: "Santé, Pharmacie & Professions libérales" },
+          { value: "autre", label: "Autre secteur d'activité" }
+        ]
       },
       {
-        value: "50-200",
-        label: "50 à 200 factures",
-        icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 2v-6m-8-3h7a2 2 0 012 2v9a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2z"/></svg>`
+        number: 11,
+        id: "client_types",
+        isCore: true,
+        role: "filtre",
+        roleLabel: "Filtre circuits",
+        title: "Typologie de clientèle",
+        subtitle: "Sélectionnez tous les types de clients que vous facturez (e-invoicing et/ou e-reporting).",
+        type: "multiple",
+        required: true,
+        options: [
+          { value: "b2b", label: "Entreprises privées françaises (B2B domestique - Assujettis TVA)" },
+          { value: "b2c", label: "Particuliers / Consommateurs finals (B2C - e-Reporting)" },
+          { value: "b2g", label: "Secteur public, État & Collectivités territoriales (B2G - Chorus Pro)" },
+          { value: "international", label: "Clients étrangers (Union Européenne ou grand export)" }
+        ]
       },
       {
-        value: "200-500",
-        label: "200 à 500 factures",
-        icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>`
+        number: 12,
+        id: "b2c_share",
+        isCore: false,
+        role: "ponderation",
+        roleLabel: "Pondération",
+        title: "Part du chiffre d'affaires réalisée avec des particuliers (B2C)",
+        subtitle: "Impacte le volume des données de transaction soumises à l'e-reporting périodique.",
+        type: "single",
+        condition: { field: "client_types", contains: "b2c" },
+        options: [
+          { value: "less_10", label: "Moins de 10 % du CA" },
+          { value: "10_50", label: "10 à 50 % du CA" },
+          { value: "plus_50", label: "Plus de 50 % du CA (Activité à dominante B2C)" }
+        ]
       },
       {
-        value: "500-1000",
-        label: "500 à 1000 factures",
-        icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>`
+        number: 13,
+        id: "b2g_public",
+        isCore: false,
+        role: "filtre",
+        roleLabel: "Filtre Chorus Pro",
+        title: "Facturation auprès du secteur public ou de collectivités",
+        subtitle: "Nécessite une passerelle d'adressage transparente avec le portail Chorus Pro de l'État.",
+        type: "single",
+        condition: { field: "client_types", contains: "b2g" },
+        options: [
+          { value: "oui", label: "Oui (Émission régulière vers le secteur public)" },
+          { value: "non", label: "Non" }
+        ]
       },
       {
-        value: "plus-1000",
-        label: "Plus de 1000 factures",
-        icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`
+        number: 14,
+        id: "foreign_clients_scope",
+        isCore: false,
+        role: "filtre",
+        roleLabel: "Filtre données",
+        title: "Localisation de vos clients internationaux",
+        subtitle: "Détermine les règles d'e-reporting international (acquisitions intracommunautaires / export).",
+        type: "single",
+        condition: { field: "client_types", contains: "international" },
+        options: [
+          { value: "ue", label: "Clients situés dans l'Union Européenne" },
+          { value: "hors_ue", label: "Clients hors Union Européenne (Grand export)" },
+          { value: "les_deux", label: "Les deux (UE et hors UE)" }
+        ]
+      },
+      {
+        number: 15,
+        id: "sales_volume",
+        isCore: true,
+        role: "filtre",
+        roleLabel: "Filtre tarif au flux",
+        title: "Volume annuel de factures de vente émises (Clients)",
+        subtitle: "Nombre total de factures clients établies par an.",
+        type: "single",
+        required: true,
+        options: [
+          { value: "less_100", label: "Moins de 100 factures / an" },
+          { value: "100_500", label: "100 à 500 factures / an" },
+          { value: "500_2000", label: "500 à 2 000 factures / an" },
+          { value: "2000_10000", label: "2 000 à 10 000 factures / an" },
+          { value: "plus_10000", label: "Plus de 10 000 factures / an" }
+        ]
+      },
+      {
+        number: 16,
+        id: "purchase_volume",
+        isCore: true,
+        role: "filtre",
+        roleLabel: "Filtre tarif au flux",
+        title: "Volume annuel de factures d'achat reçues (Fournisseurs)",
+        subtitle: "Nombre total de factures fournisseurs à réceptionner et intégrer par an.",
+        type: "single",
+        required: true,
+        options: [
+          { value: "less_100", label: "Moins de 100 factures / an" },
+          { value: "100_500", label: "100 à 500 factures / an" },
+          { value: "500_2000", label: "500 à 2 000 factures / an" },
+          { value: "2000_10000", label: "2 000 à 10 000 factures / an" },
+          { value: "plus_10000", label: "Plus de 10 000 factures / an" }
+        ]
+      },
+      {
+        number: 17,
+        id: "vat_regime",
+        isCore: false,
+        role: "information",
+        roleLabel: "Information",
+        title: "Régime fiscal de TVA applicable",
+        subtitle: "Information utile pour le paramétrage de l'e-reporting fiscal.",
+        type: "single",
+        options: [
+          { value: "reel_normal", label: "Régime réel normal" },
+          { value: "reel_simplifie", label: "Régime réel simplifié" },
+          { value: "franchise_base", label: "Franchise en base de TVA (non assujetti)" }
+        ]
+      },
+      {
+        number: 18,
+        id: "vat_payment_data",
+        isCore: false,
+        role: "filtre",
+        roleLabel: "Filtre données de paiement",
+        title: "Prestations de services avec exigibilité de la TVA à l'encaissement",
+        subtitle: "L'État exige la transmission du statut de paiement pour les prestations de services.",
+        type: "single",
+        options: [
+          { value: "oui", label: "Oui (TVA exigible lors du règlement client)" },
+          { value: "non", label: "Non (Livraisons de biens ou TVA sur les débits)" },
+          { value: "option_debits", label: "Option expresse pour le paiement d'après les débits" }
+        ]
+      },
+      {
+        number: 19,
+        id: "billing_mandate",
+        isCore: false,
+        role: "filtre",
+        roleLabel: "Filtre mandat",
+        title: "Facturation au nom et pour le compte de tiers (Mandat d'autofacturation)",
+        subtitle: "Émettez-vous ou recevez-vous des factures en sous-traitance / mandataire ?",
+        type: "single",
+        options: [
+          { value: "oui", label: "Oui (Mandat de facturation à gérer)" },
+          { value: "non", label: "Non" }
+        ]
       }
     ]
   },
   {
-    step: 3,
-    id: "software",
-    title: "Quel outil de facturation utilisez-vous actuellement ?",
-    subtitle: "Cela facilitera l'analyse de compatibilité ou d'intégration directe.",
-    type: "single",
-    required: true,
-    options: [
-      { value: "none", label: "Aucun outil de facturation", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>` },
-      { value: "excel", label: "Excel, Word ou papier", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 2v-6m-8-3h7a2 2 0 012 2v9a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2z"/></svg>` },
-      { value: "sage", label: "Sage", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>` },
-      { value: "pennylane", label: "Pennylane", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"/></svg>` },
-      { value: "ebp", label: "EBP", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>` },
-      { value: "cegid", label: "Cegid", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>` },
-      { value: "odoo", label: "Odoo", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>` },
-      { value: "sellsy", label: "Sellsy", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>` },
-      { value: "tiime", label: "Tiime", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>` },
-      { value: "axonaut", label: "Axonaut", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>` },
-      { value: "henrri", label: "Henrri", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>` },
-      { value: "indy", label: "Indy (ex-Georges)", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1z"/></svg>` },
-      { value: "evoliz", label: "Evoliz", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>` },
-      { value: "ipaidthat", label: "Ipaidthat", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>` },
-      { value: "vosfactures", label: "VosFactures", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>` },
-      { value: "quadra", label: "Cegid Quadra", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>` },
-      { value: "myunisoft", label: "MyUnisoft", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>` },
-      { value: "acd", label: "ACD Groupe", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>` },
-      { value: "dougs", label: "Dougs", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>` },
-      { value: "abby", label: "Abby", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>` },
-      { value: "freebe", label: "Freebe", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.364l-.707-.707M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>` },
-      { value: "kiwili", label: "Kiwili", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>` },
-      { value: "facture-net", label: "Facture.net", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>` },
-      { value: "zervant", label: "Zervant", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>` },
-      { value: "quickbooks", label: "QuickBooks", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"/></svg>` },
-      { value: "xero", label: "Xero", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg>` },
-      { value: "itool", label: "Itool", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>` },
-      { value: "compta-com", label: "Compta.com", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/></svg>` },
-      { value: "dext", label: "Dext (Receipt Bank)", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>` },
-      { value: "yooz", label: "Yooz", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M30 30 L50 70 L70 30" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></svg>` },
-      { value: "spendesk", label: "Spendesk", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>` },
-      { value: "libeo", label: "Libeo", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M30 70 V30 L70 70 V30" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></svg>` },
-      { value: "regate", label: "Regate", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H17m-1 4v5h.582"/></svg>` },
-      { value: "boby", label: "Boby", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.757a2 2 0 11-2.828 2.828L13 10M10 14h-4.757a2 2 0 112.828-2.828L10 14z"/></svg>` },
-      { value: "waibi", label: "Waibi", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>` },
-      { value: "sap", label: "SAP", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>` },
-      { value: "microsoft-dynamics", label: "Microsoft Dynamics", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z"/></svg>` },
-      { value: "oracle-netsuite", label: "Oracle NetSuite", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 4 4 0 00-7.896 0A4 4 0 003 15z"/></svg>` },
-      { value: "autre", label: "Autre outil", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>` }
-    ]
-  },
-  {
-    step: 4,
-    id: "accountant",
-    title: "Travaillez-vous avec un expert-comptable ?",
-    subtitle: "Certaines PDP permettent un partage d'écritures direct et automatisé.",
-    type: "single",
-    required: true,
-    options: [
+    id: "C",
+    title: "Section C · Environnement logiciel",
+    description: "Vérifions la compatibilité de vos outils actuels (outils de facturation, comptabilité, ERP, caisse).",
+    questions: [
       {
-        value: "oui",
-        label: "Oui, j'ai un expert-comptable",
-        icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`
+        number: 20,
+        id: "tool_count",
+        isCore: true,
+        role: "ponderation",
+        roleLabel: "Pondération intégration",
+        title: "Nombre d'outils intervenant dans le cycle de facturation",
+        subtitle: "Combien d'applications distinctes génèrent ou traitent des factures chez vous ?",
+        type: "single",
+        required: true,
+        options: [
+          { value: "one", label: "Un seul outil intégré" },
+          { value: "two_three", label: "2 à 3 outils distincts (ex: Caisse + Facturation + Compta)" },
+          { value: "more_three", label: "Plus de 3 outils (Architecture complexe / multi-logiciels)" }
+        ]
       },
       {
-        value: "non",
-        label: "Non, je gère ma comptabilité seul",
-        icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`
+        number: 21,
+        id: "current_billing_software",
+        isCore: true,
+        role: "filtre",
+        roleLabel: "Filtre connecteur",
+        title: "Logiciel de facturation ou logiciel métier actuel",
+        subtitle: "L'outil dans lequel vous saisissez vos devis et factures de vente.",
+        type: "search-select",
+        required: true,
+        options: [
+          { value: "sage", label: "Sage (100, 50, Batigest, FRP 1000...)" },
+          { value: "pennylane", label: "Pennylane" },
+          { value: "cegid", label: "Cegid (Loop, Quadra, XRP Sprint...)" },
+          { value: "ebp", label: "EBP (Compta, Gestion commerciale...)" },
+          { value: "tiime", label: "Tiime" },
+          { value: "indy", label: "Indy (ex-Georges)" },
+          { value: "sellsy", label: "Sellsy" },
+          { value: "axonaut", label: "Axonaut" },
+          { value: "odoo", label: "Odoo" },
+          { value: "evoliz", label: "Evoliz" },
+          { value: "ipaidthat", label: "Ipaidthat" },
+          { value: "henrri", label: "Henrri" },
+          { value: "vosfactures", label: "VosFactures" },
+          { value: "myunisoft", label: "MyUnisoft" },
+          { value: "acd", label: "ACD Groupe" },
+          { value: "dougs", label: "Dougs" },
+          { value: "excel", label: "Excel, Word ou papier" },
+          { value: "aucun", label: "Aucun logiciel de facturation" },
+          { value: "autre", label: "Autre logiciel métier spécialisé" }
+        ]
+      },
+      {
+        number: 22,
+        id: "current_accounting_software",
+        isCore: true,
+        role: "filtre",
+        roleLabel: "Filtre connecteur",
+        title: "Logiciel comptable utilisé",
+        subtitle: "L'outil utilisé par votre service comptabilité interne ou votre expert-comptable.",
+        type: "search-select",
+        required: true,
+        options: [
+          { value: "sage", label: "Sage (Sage 100 Génération Experts, FRP...)" },
+          { value: "cegid", label: "Cegid (Cegid Expert, Quadra, Loop...)" },
+          { value: "pennylane", label: "Pennylane" },
+          { value: "ebp", label: "EBP Compta" },
+          { value: "acd", label: "ACD Groupe (DiaCompta, i-Suite...)" },
+          { value: "myunisoft", label: "MyUnisoft" },
+          { value: "isagri", label: "Isagri / Agiris" },
+          { value: "fidal", label: "Fiducial" },
+          { value: "tiime", label: "Tiime" },
+          { value: "autre", label: "Autre outil comptable" },
+          { value: "ne_sait_pas", label: "Géré entièrement par l'expert-comptable" }
+        ]
+      },
+      {
+        number: 23,
+        id: "erp_software",
+        isCore: false,
+        role: "filtre",
+        roleLabel: "Filtre connecteur",
+        title: "Progiciel de Gestion Intégré (ERP) éventuel",
+        subtitle: "Si votre entreprise s'appuie sur un ERP centralisé.",
+        type: "search-select",
+        options: [
+          { value: "aucun", label: "Aucun ERP" },
+          { value: "sap", label: "SAP (S/4HANA, Business One...)" },
+          { value: "microsoft_dynamics", label: "Microsoft Dynamics 365 / Navision" },
+          { value: "odoo", label: "Odoo ERP" },
+          { value: "sage_x3", label: "Sage X3" },
+          { value: "infor", label: "Infor" },
+          { value: "netsuite", label: "Oracle NetSuite" },
+          { value: "autre", label: "Autre ERP" }
+        ]
+      },
+      {
+        number: 24,
+        id: "structured_format",
+        isCore: true,
+        role: "filtre",
+        roleLabel: "Filtre format",
+        title: "Format structuré que votre système peut produire aujourd'hui",
+        subtitle: "La norme franco-européenne impose l'un de ces formats socles standardisés.",
+        type: "single",
+        required: true,
+        options: [
+          { value: "facturx", label: "Factur-X (Format mixte : PDF lisible + XML structuré intégré)" },
+          { value: "ubl", label: "UBL (Universal Business Language - XML pur)" },
+          { value: "cii", label: "CII (Cross Industry Invoice - XML pur)" },
+          { value: "aucun", label: "Aucun (Factures éditées en PDF simple ou papier)" },
+          { value: "ne_sait_pas", label: "Je ne sais pas" }
+        ]
+      },
+      {
+        number: 25,
+        id: "connection_mode",
+        isCore: false,
+        role: "filtre",
+        roleLabel: "Filtre",
+        title: "Mode de raccordement technique souhaité avec la plateforme",
+        subtitle: "Comment souhaitez-vous échanger vos factures avec la Plateforme Agréée ?",
+        type: "single",
+        options: [
+          { value: "api", label: "API REST / Webhook temps réel (Intégration transparente et automatique)" },
+          { value: "edi", label: "EDI / SFTP / AS2 (Échanges de flux sécurisés par lots automatisés)" },
+          { value: "depot", label: "Dépôt manuel de fichiers (Upload de PDF/Factur-X sur le portail)" },
+          { value: "portail", label: "Saisie directe en ligne sur le portail web de la plateforme" }
+        ]
+      },
+      {
+        number: 26,
+        id: "status_feedback",
+        isCore: false,
+        role: "ponderation",
+        roleLabel: "Pondération",
+        title: "Retour des statuts de cycle de vie dans votre outil métier",
+        subtitle: "Remontée automatique des statuts légaux (Déposée, Rejetée, Refusée, Encaissée) dans votre logiciel.",
+        type: "single",
+        options: [
+          { value: "indispensable", label: "Indispensable (Suivi temps réel direct sans changer d'écran)" },
+          { value: "souhaitable", label: "Souhaitable mais non bloquant" },
+          { value: "indifferent", label: "Indifférent (Consultation sur le portail de la plateforme)" }
+        ]
+      },
+      {
+        number: 27,
+        id: "manual_reentry",
+        isCore: false,
+        role: "ponderation",
+        roleLabel: "Pondération automatisation",
+        title: "Volume de ressaisies manuelles constatées aujourd'hui",
+        subtitle: "Objectif de réduction des erreurs et des temps de traitement administratif.",
+        type: "single",
+        options: [
+          { value: "aucune", label: "Aucune ressaisie (Tout est déjà automatisé)" },
+          { value: "quelques_unes", label: "Quelques-unes sur les factures d'achats ou les règlements" },
+          { value: "nombreuses", label: "Nombreuses ressaisies manuelles (Fort besoin d'automatisation OCR/IA)" }
+        ]
       }
     ]
   },
   {
-    step: 5,
-    id: "features",
-    title: "Quelles sont les fonctionnalités indispensables ?",
-    subtitle: "Sélectionnez toutes les options nécessaires pour votre activité (choix multiples).",
-    type: "multiple",
-    required: false,
-    options: [
-      { value: "eInvoicing", label: "Émission de factures électroniques (e-Invoicing)", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>` },
-      { value: "receiving", label: "Réception & Centralisation des factures fournisseurs", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 001.414 0l2.414-2.414a1 1 0 01.707-.293H20"/></svg>` },
-      { value: "payment", label: "Paiement intégré des factures (CB, virement, prélèvement)", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>` },
-      { value: "signature", label: "Signature électronique qualifiée de vos documents", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>` },
-      { value: "reminders", label: "Relance automatique des factures impayées", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>` },
-      { value: "api", label: "API ouverte pour connecter vos ERP ou CRM", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>` },
-      { value: "multiUser", label: "Multi-utilisateurs (accès collaborateurs)", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>` },
-      { value: "quotes", label: "Création et gestion des devis associés", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>` },
-      { value: "accountingSync", label: "Synchronisation bancaire & rapprochement comptable", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>` }
-    ]
-  },
-  {
-    step: 6,
-    id: "budget",
-    title: "Quel est votre budget mensuel maximum ?",
-    subtitle: "Cela orientera les résultats vers les plateformes à coûts maîtrisés.",
-    type: "single",
-    required: true,
-    options: [
-      { value: "free", label: "Gratuit uniquement", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>` },
-      { value: "less-20", label: "Moins de 20 € / mois", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>` },
-      { value: "20-50", label: "20 à 50 € / mois", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>` },
-      { value: "50-100", label: "50 à 100 € / mois", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>` },
-      { value: "plus-100", label: "Plus de 100 € / mois", icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z"/></svg>` }
-    ]
-  },
-  {
-    step: 7,
-    id: "assistance",
-    title: "Souhaitez-vous être accompagné lors de la mise en place ?",
-    subtitle: "Certaines plateformes intègrent un service client dédié pour l'onboarding.",
-    type: "single",
-    required: true,
-    options: [
+    id: "D",
+    title: "Section D · Besoins fonctionnels",
+    description: "Définissons les fonctionnalités indispensables pour votre organisation administrative.",
+    questions: [
       {
-        value: "oui",
-        label: "Oui, un accompagnement est souhaitable",
-        icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>`
+        number: 28,
+        id: "platform_expectations",
+        isCore: true,
+        role: "filtre",
+        roleLabel: "Filtre",
+        title: "Besoins attendus de la Plateforme Agréée",
+        subtitle: "Cochez l'ensemble des missions que vous souhaitez confier à la plateforme.",
+        type: "multiple",
+        required: true,
+        options: [
+          { value: "emission", label: "Émission et transmission réglementaire des factures de vente" },
+          { value: "reception", label: "Réception centralisée et traitement des factures fournisseurs" },
+          { value: "ereporting", label: "Transmission des données d'e-reporting à l'administration fiscale" },
+          { value: "archivage", label: "Archivage électronique légal à valeur probante (10 ans)" }
+        ]
       },
       {
-        value: "non",
-        label: "Non, je préfère configurer en autonomie",
-        icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>`
+        number: 29,
+        id: "approval_workflow",
+        isCore: false,
+        role: "ponderation",
+        roleLabel: "Pondération",
+        title: "Circuit de validation / Bon à payer des factures d'achat",
+        subtitle: "Besoin de paramétrer des workflows de validation hiérarchique avant mise en paiement.",
+        type: "single",
+        options: [
+          { value: "oui", label: "Oui (Workflows multi-niveaux / bons à payer nécessaires)" },
+          { value: "non", label: "Non (Validation simple)" }
+        ]
+      },
+      {
+        number: 30,
+        id: "pre_validation_checks",
+        isCore: false,
+        role: "ponderation",
+        roleLabel: "Pondération",
+        title: "Contrôle automatisé des données avant émission",
+        subtitle: "Vérification syntaxique, contrôle SIREN dans l'annuaire national et conformité des mentions légales.",
+        type: "single",
+        options: [
+          { value: "indispensable", label: "Indispensable (Bloquer toute facture non conforme pour éviter les amendes)" },
+          { value: "souhaitable", label: "Souhaitable" },
+          { value: "indifferent", label: "Indifférent" }
+        ]
+      },
+      {
+        number: 31,
+        id: "probative_archiving",
+        isCore: false,
+        role: "filtre",
+        roleLabel: "Filtre",
+        title: "Archivage à valeur probante (Norme NF Z42-013 / Coffre-fort numérique)",
+        subtitle: "La plateforme doit-elle assurer la conservation légale scellée pendant 10 ans ?",
+        type: "single",
+        options: [
+          { value: "a_couvrir", label: "À couvrir intégralement par la Plateforme Agréée" },
+          { value: "deja_couvert", label: "Déjà couvert par un SAE / coffre-fort d'archivage existant" }
+        ]
+      },
+      {
+        number: 32,
+        id: "analytics_dashboards",
+        isCore: false,
+        role: "ponderation",
+        roleLabel: "Pondération",
+        title: "Tableaux de bord de trésorerie et exports financiers",
+        subtitle: "Visualisation des délais de paiement, alertes litiges et états de TVA prévisionnels.",
+        type: "single",
+        options: [
+          { value: "indispensable", label: "Indispensable" },
+          { value: "souhaitable", label: "Souhaitable" },
+          { value: "indifferent", label: "Indifférent" }
+        ]
+      },
+      {
+        number: 33,
+        id: "credit_notes_management",
+        isCore: false,
+        role: "ponderation",
+        roleLabel: "Pondération",
+        title: "Gestion automatisée des avoirs et factures rectificatives",
+        subtitle: "Liaison stricte entre facture initiale et avoir de régularisation exigée par l'administration.",
+        type: "single",
+        options: [
+          { value: "oui", label: "Oui (Émission régulière d'avoirs partiels ou totaux)" },
+          { value: "non", label: "Non" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "E",
+    title: "Section E · Utilisateurs et sécurité",
+    description: "Évaluons les accès d'équipe, les exigences de localisation et les certifications de sécurité.",
+    questions: [
+      {
+        number: 34,
+        id: "user_count",
+        isCore: true,
+        role: "filtre",
+        roleLabel: "Filtre licences",
+        title: "Nombre d'utilisateurs devant accéder à la plateforme",
+        subtitle: "Collaborateurs amenés à consulter, valider ou émettre des factures.",
+        type: "single",
+        required: true,
+        options: [
+          { value: "1", label: "1 utilisateur unique (Dirigeant ou comptable unique)" },
+          { value: "2_5", label: "2 à 5 utilisateurs" },
+          { value: "6_20", label: "6 à 20 utilisateurs" },
+          { value: "plus_20", label: "Plus de 20 utilisateurs (Grand compte / multi-sites)" }
+        ]
+      },
+      {
+        number: 35,
+        id: "role_based_access",
+        isCore: false,
+        role: "filtre",
+        roleLabel: "Filtre",
+        title: "Droits d'accès différenciés par profil ou établissement",
+        subtitle: "Gestion de rôles fins (administrateur, approbateur, lecteur, comptable, par site).",
+        type: "single",
+        condition: { field: "user_count", notIn: ["1"] },
+        options: [
+          { value: "oui", label: "Oui (Permissions personnalisées requises)" },
+          { value: "non", label: "Non" }
+        ]
+      },
+      {
+        number: 36,
+        id: "data_hosting_location",
+        isCore: false,
+        role: "filtre",
+        roleLabel: "Filtre",
+        title: "Hébergement des données en France ou dans l'Union Européenne",
+        subtitle: "Garantie de souveraineté et non-soumission aux législations extraterritoriales (Cloud Act).",
+        type: "single",
+        options: [
+          { value: "exige", label: "Exigé (Hébergement 100% en France ou UE)" },
+          { value: "indifferent", label: "Indifférent" }
+        ]
+      },
+      {
+        number: 37,
+        id: "security_certification",
+        isCore: false,
+        role: "filtre",
+        roleLabel: "Filtre",
+        title: "Certification de sécurité exigée (ISO 27001 ou SecNumCloud)",
+        subtitle: "Normes internationales de sécurité des systèmes d'information et de cryptographie.",
+        type: "single",
+        options: [
+          { value: "oui", label: "Oui (Certification formelle obligatoire dans notre cahier des charges)" },
+          { value: "non", label: "Non" }
+        ]
+      },
+      {
+        number: 38,
+        id: "reversibility_clause",
+        isCore: false,
+        role: "ponderation",
+        roleLabel: "Pondération",
+        title: "Garantie contractuelle de réversibilité des données",
+        subtitle: "Capacité à récupérer l'intégralité de l'historique et des statuts sans frais en cas de changement de prestataire.",
+        type: "single",
+        options: [
+          { value: "oui", label: "Oui (Clause de réversibilité indispensable)" },
+          { value: "non", label: "Non" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "F",
+    title: "Section F · Expert-comptable",
+    description: "Coordonnez les échanges avec votre cabinet d'expertise comptable.",
+    questions: [
+      {
+        number: 39,
+        id: "has_accountant",
+        isCore: true,
+        role: "ponderation",
+        roleLabel: "Pondération",
+        title: "Votre entreprise est-elle accompagnée par un cabinet d'expertise comptable ?",
+        subtitle: "L'interconnexion fluide avec le cabinet évite les doubles saisies d'écritures.",
+        type: "single",
+        required: true,
+        options: [
+          { value: "oui", label: "Oui (Expert-comptable externe régulier)" },
+          { value: "non", label: "Non (Comptabilité gérée 100% en interne)" },
+          { value: "en_recherche", label: "En recherche d'un cabinet partenaire" }
+        ]
+      },
+      {
+        number: 40,
+        id: "accountant_portal_access",
+        isCore: false,
+        role: "filtre",
+        roleLabel: "Filtre",
+        title: "Accès dédié gratuit ou portail collaboratif pour le cabinet",
+        subtitle: "Permet à votre expert-comptable d'accéder directement aux factures et écritures.",
+        type: "single",
+        condition: { field: "has_accountant", value: "oui" },
+        options: [
+          { value: "indispensable", label: "Indispensable (Accès cabinet dédié requis)" },
+          { value: "souhaitable", label: "Souhaitable" },
+          { value: "non_necessaire", label: "Non nécessaire (Exports manuels mensuels)" }
+        ]
+      },
+      {
+        number: 41,
+        id: "accountant_recommended_tool",
+        isCore: false,
+        role: "information",
+        roleLabel: "Information",
+        title: "Votre cabinet d'expertise comptable vous a-t-il déjà recommandé une plateforme ?",
+        subtitle: "Facilite l'alignement avec les outils de production du cabinet.",
+        type: "text",
+        placeholder: "Nom de la plateforme recommandée (ou 'Non')",
+        condition: { field: "has_accountant", value: "oui" }
+      }
+    ]
+  },
+  {
+    id: "G",
+    title: "Section G · Budget et accompagnement",
+    description: "Définissez votre budget cible et le niveau de support technique souhaité.",
+    questions: [
+      {
+        number: 42,
+        id: "annual_budget",
+        isCore: true,
+        role: "filtre",
+        roleLabel: "Filtre tarifaire",
+        title: "Budget annuel d'abonnement envisagé pour la plateforme",
+        subtitle: "Coût récurrent des licences et du traitement des flux.",
+        type: "single",
+        required: true,
+        options: [
+          { value: "less_200", label: "Moins de 200 € / an (< 17 €/mois)" },
+          { value: "200_600", label: "200 à 600 € / an (17 à 50 €/mois)" },
+          { value: "600_2000", label: "600 à 2 000 € / an (50 à 160 €/mois)" },
+          { value: "plus_2000", label: "Plus de 2 000 € / an" },
+          { value: "non_defini", label: "Budget non défini / recherche du meilleur rapport qualité-prix" }
+        ]
+      },
+      {
+        number: 43,
+        id: "setup_budget",
+        isCore: false,
+        role: "ponderation",
+        roleLabel: "Pondération",
+        title: "Budget de mise en service, paramétrage et intégration initiale",
+        subtitle: "Prestations d'installation, raccordement connecteurs et formation des équipes.",
+        type: "single",
+        options: [
+          { value: "less_500", label: "Moins de 500 € (Auto-déploiement guidé)" },
+          { value: "500_2000", label: "500 à 2 000 €" },
+          { value: "plus_2000", label: "Plus de 2 000 € (Projet d'intégration sur-mesure)" },
+          { value: "non_defini", label: "Non défini" }
+        ]
+      },
+      {
+        number: 44,
+        id: "price_sensitivity",
+        isCore: false,
+        role: "ponderation",
+        roleLabel: "Pondération globale",
+        title: "Sensibilité au prix par rapport à la richesse fonctionnelle",
+        subtitle: "Votre critère d'arbitrage prépondérant.",
+        type: "single",
+        options: [
+          { value: "prix_prioritaire", label: "Prix prioritaire (Solution économique pour simple conformité)" },
+          { value: "equilibre", label: "Équilibré (Bon rapport coût / fonctionnalités)" },
+          { value: "fonctions_prioritaires", label: "Fonctionnalités et automatisation prioritaires (Gain de temps maximal)" }
+        ]
+      },
+      {
+        number: 45,
+        id: "onboarding_need",
+        isCore: true,
+        role: "ponderation",
+        roleLabel: "Pondération",
+        title: "Besoin d'accompagnement au déploiement",
+        subtitle: "Quel niveau d'aide humaine souhaitez-vous pour démarrer ?",
+        type: "single",
+        required: true,
+        options: [
+          { value: "autonome", label: "Autonome (Documentation en ligne, vidéos et tutoriels)" },
+          { value: "demarrage", label: "Assistance au démarrage (Webinaire de prise en main & support)" },
+          { value: "complet", label: "Accompagnement complet dédié (Chef de projet, formation équipe)" }
+        ]
+      },
+      {
+        number: 46,
+        id: "french_support_sla",
+        isCore: false,
+        role: "ponderation",
+        roleLabel: "Pondération",
+        title: "Support client basé en France avec engagement de délai (SLA)",
+        subtitle: "Garantie contractuelle de temps de réponse et assistance téléphonique en français.",
+        type: "single",
+        options: [
+          { value: "exige", label: "Exigé (Support téléphonique réactif et SLA contractuel)" },
+          { value: "souhaitable", label: "Souhaitable (Support par ticket / chat réactif)" },
+          { value: "indifferent", label: "Indifférent" }
+        ]
+      },
+      {
+        number: 47,
+        id: "testing_sandbox_phase",
+        isCore: false,
+        role: "ponderation",
+        roleLabel: "Pondération",
+        title: "Phase de tests / bac à sable (Sandbox) avant bascule définitive",
+        subtitle: "Tester l'émission et la réception en environnement virtuel sans impact comptable.",
+        type: "single",
+        options: [
+          { value: "exigee", label: "Exigée (Tester obligatoirement les connecteurs avant mise en prod)" },
+          { value: "non_necessaire", label: "Non nécessaire" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "H",
+    title: "Section H · Spécificités Hôtellerie - Restauration",
+    description: "Section dédiée aux établissements hôteliers, résidences et restaurants (PMS, caisses, multi-taux de TVA, arrhes et débours).",
+    condition: { field: "sector", value: "hotellerie_restauration" },
+    questions: [
+      {
+        number: 48,
+        id: "pms_tool",
+        isCore: true,
+        role: "filtre",
+        roleLabel: "Filtre connecteur",
+        title: "Property Management System (PMS) utilisé",
+        subtitle: "Votre logiciel central de gestion des chambres et des réservations.",
+        type: "search-select",
+        required: true,
+        options: [
+          { value: "opera", label: "Oracle Hospitality OPERA (Cloud / V5)" },
+          { value: "mews", label: "Mews Hospitality PMS" },
+          { value: "thais", label: "Thaïs PMS (Thaïs Soft)" },
+          { value: "medialog", label: "Medialog Hôtel" },
+          { value: "asterio", label: "Asterio (Sequoiasoft)" },
+          { value: "misterbooking", label: "Misterbooking" },
+          { value: "vega", label: "Vega PMS" },
+          { value: "innsist", label: "Innsist / Amadeus" },
+          { value: "autre", label: "Autre PMS hôtelier" },
+          { value: "aucun", label: "Aucun PMS (Gestion manuelle)" }
+        ]
+      },
+      {
+        number: 49,
+        id: "pms_multi_sites",
+        isCore: true,
+        role: "ponderation",
+        roleLabel: "Pondération harmonisation",
+        title: "Parc PMS de vos établissements",
+        subtitle: "Utilisez-vous un outil unique ou des PMS hétérogènes selon vos établissements ?",
+        type: "single",
+        required: true,
+        options: [
+          { value: "unique", label: "PMS unique centralisé sur tous nos établissements" },
+          { value: "differents", label: "PMS différents selon les sites (Besoin d'agrégation multi-connecteurs)" }
+        ]
+      },
+      {
+        number: 50,
+        id: "pos_software",
+        isCore: true,
+        role: "filtre",
+        roleLabel: "Filtre connecteur",
+        title: "Logiciel de caisse / Point de Vente (POS)",
+        subtitle: "Système d'encaissement pour le restaurant, bar, spa ou boutique.",
+        type: "search-select",
+        required: true,
+        options: [
+          { value: "simphony", label: "Oracle Simphony POS" },
+          { value: "lightspeed", label: "Lightspeed Restaurant" },
+          { value: "tiller", label: "Tiller / SumUp POS" },
+          { value: "zelty", label: "Zelty" },
+          { value: "pi_electronique", label: "Pi Électronique" },
+          { value: "autre", label: "Autre logiciel de caisse" },
+          { value: "aucun", label: "Aucun logiciel de caisse (Intégré au PMS ou hébergement pur)" }
+        ]
+      },
+      {
+        number: 51,
+        id: "channel_manager",
+        isCore: false,
+        role: "ponderation",
+        roleLabel: "Pondération",
+        title: "Channel Manager & Moteur de réservation",
+        subtitle: "Outil de synchronisation des canaux de distribution (D-Edge, SiteMinder, Availpro...).",
+        type: "text",
+        placeholder: "Ex: D-Edge, SiteMinder, Cubilis (ou 'Aucun')"
+      },
+      {
+        number: 52,
+        id: "billing_start_point",
+        isCore: true,
+        role: "filtre",
+        roleLabel: "Filtre architecture",
+        title: "Point de départ souhaité de la facturation",
+        subtitle: "Où la facture officielle doit-elle être générée initialement ?",
+        type: "single",
+        required: true,
+        options: [
+          { value: "depuis_pms", label: "Depuis le PMS (Le PMS génère la facture et la transmet à la plateforme)" },
+          { value: "depuis_compta", label: "Depuis la comptabilité (Centralisation des écritures avant émission)" },
+          { value: "depuis_plateforme", label: "Directement depuis la Plateforme Agréée" }
+        ]
+      },
+      {
+        number: 53,
+        id: "ota_revenue_share",
+        isCore: true,
+        role: "ponderation",
+        roleLabel: "Pondération commissions",
+        title: "Part du chiffre d'affaires réalisée via des OTA et intermédiaires (Booking, Expedia...)",
+        subtitle: "Impacte la gestion de l'e-reporting et le retraitement des commissions d'agences.",
+        type: "single",
+        required: true,
+        options: [
+          { value: "aucune", label: "Aucune (100 % en direct)" },
+          { value: "less_25", label: "Moins de 25 % du CA" },
+          { value: "25_50", label: "25 à 50 % du CA" },
+          { value: "plus_50", label: "Plus de 50 % du CA (Forte dépendance aux OTA)" }
+        ]
+      },
+      {
+        number: 54,
+        id: "foreign_ota_vat_reverse",
+        isCore: false,
+        role: "ponderation",
+        roleLabel: "Pondération",
+        title: "Commissions d'intermédiaires étrangers avec autoliquidation de TVA",
+        subtitle: "Traitement fiscal des factures de commissions reçues de Booking.com (Pays-Bas) ou Expedia.",
+        type: "single",
+        options: [
+          { value: "oui", label: "Oui (Autoliquidation de TVA sur commissions étrangères à gérer)" },
+          { value: "non", label: "Non" }
+        ]
+      },
+      {
+        number: 55,
+        id: "group_seminars_billing",
+        isCore: true,
+        role: "ponderation",
+        roleLabel: "Pondération",
+        title: "Facturation de groupes, séminaires ou comptes débiteurs divers",
+        subtitle: "Émission de factures globales B2B avec fractionnement de prestations.",
+        type: "single",
+        required: true,
+        options: [
+          { value: "oui", label: "Oui (Facturation fréquente de séminaires et groupes entreprises)" },
+          { value: "non", label: "Non (Clientèle individuelle quasi-exclusive)" }
+        ]
+      },
+      {
+        number: 56,
+        id: "employer_rebilling",
+        isCore: true,
+        role: "ponderation",
+        roleLabel: "Pondération contrôle",
+        title: "Refacturation d'un séjour à l'employeur du client (Société tierce)",
+        subtitle: "Le client individuel demande une facture au nom de son entreprise avec mention du SIREN.",
+        type: "single",
+        required: true,
+        options: [
+          { value: "frequente", label: "Fréquente (Gestion des flux B2B au comptoir essentielle)" },
+          { value: "occasionnelle", label: "Occasionnelle" },
+          { value: "jamais", label: "Jamais" }
+        ]
+      },
+      {
+        number: 57,
+        id: "deposits_no_show",
+        isCore: true,
+        role: "ponderation",
+        roleLabel: "Pondération",
+        title: "Gestion des arrhes, acomptes et indemnités de non-présentation (No-show)",
+        subtitle: "Traitement des règles d'exigibilité de TVA spécifiques aux acomptes et pénalités.",
+        type: "single",
+        required: true,
+        options: [
+          { value: "oui", label: "Oui (Acomptes encaissés à la réservation et no-shows fréquents)" },
+          { value: "non", label: "Non" }
+        ]
+      },
+      {
+        number: 58,
+        id: "cancellations_frequency",
+        isCore: false,
+        role: "ponderation",
+        roleLabel: "Pondération",
+        title: "Fréquence des avoirs, remboursements et annulations",
+        subtitle: "Nécessite une automatisation fluide de la chaîne d'avoirs réglementaires.",
+        type: "single",
+        options: [
+          { value: "oui", label: "Fréquents (Remboursements et annulations réguliers)" },
+          { value: "non", label: "Faibles" }
+        ]
+      },
+      {
+        number: 59,
+        id: "multi_vat_rates",
+        isCore: true,
+        role: "ponderation",
+        roleLabel: "Pondération ventilation",
+        title: "Plusieurs taux de TVA sur une même facture",
+        subtitle: "Hébergement (10%), Restauration (10%/20%), Boissons alcoolisées (20%), Petit-déjeuner (5.5%/10%).",
+        type: "single",
+        required: true,
+        options: [
+          { value: "oui", label: "Oui (Ventilation multi-taux sur facture unique indispensable)" },
+          { value: "non", label: "Non (Taux unique)" }
+        ]
+      },
+      {
+        number: 60,
+        id: "tourist_tax_on_invoice",
+        isCore: false,
+        role: "ponderation",
+        roleLabel: "Pondération hors champ",
+        title: "Taxe de séjour figurant sur la facture client",
+        subtitle: "Ligne spécifique non assujettie à la TVA (hors champ fiscal).",
+        type: "single",
+        options: [
+          { value: "oui", label: "Oui (Taxe de séjour gérée et ventilée hors TVA)" },
+          { value: "non", label: "Non" }
+        ]
+      },
+      {
+        number: 61,
+        id: "separate_bar_restaurant",
+        isCore: false,
+        role: "ponderation",
+        roleLabel: "Pondération",
+        title: "Restauration ou bar facturés séparément de l'hébergement",
+        subtitle: "Transfert de notes de table (clôture POS) vers le folio chambre du PMS.",
+        type: "single",
+        options: [
+          { value: "oui", label: "Oui (Interfaçage Caisse POS ➔ Folio PMS)" },
+          { value: "non", label: "Non" }
+        ]
+      },
+      {
+        number: 62,
+        id: "payment_methods",
+        isCore: false,
+        role: "ponderation",
+        roleLabel: "Pondération donnée de paiement",
+        title: "Modes d'encaissement utilisés",
+        subtitle: "Sélectionnez vos différents canaux d'encaissement pour l'e-reporting des paiements.",
+        type: "multiple",
+        options: [
+          { value: "tpe", label: "Terminal de paiement physique (TPE comptoir)" },
+          { value: "pay_online", label: "Paiement sécurisé en ligne (VAD / Passerelle web)" },
+          { value: "virtual_card", label: "Cartes de crédit virtuelles (VCC) / Prépaiement OTA" },
+          { value: "virement", label: "Virement bancaire (Sociétés / Groupes)" }
+        ]
+      },
+      {
+        number: 63,
+        id: "seasonal_staff",
+        isCore: false,
+        role: "ponderation",
+        roleLabel: "Pondération ergonomie",
+        title: "Recours à du personnel saisonnier pour la facturation",
+        subtitle: "Nécessite une interface simplifiée et ergonomique pour limiter les temps de formation.",
+        type: "single",
+        options: [
+          { value: "oui", label: "Oui (Turnover saisonnier régulier à la réception)" },
+          { value: "non", label: "Non" }
+        ]
+      },
+      {
+        number: 64,
+        id: "common_procedures_guide",
+        isCore: false,
+        role: "information",
+        roleLabel: "Information",
+        title: "Guide de procédures de facturation commun aux établissements",
+        subtitle: "Standardisation des règles d'émission et de clôture de caisse.",
+        type: "single",
+        options: [
+          { value: "oui", label: "Oui (Procédures écrites formalisées)" },
+          { value: "non", label: "Non" }
+        ]
+      },
+      {
+        number: 65,
+        id: "para_hotellerie_activity",
+        isCore: false,
+        role: "information",
+        roleLabel: "Information",
+        title: "Activité de para-hôtellerie ou résidences de tourisme",
+        subtitle: "Fourniture d'au moins 3 prestations para-hôtelières (accueil, ménage, linge, petit-déjeuner).",
+        type: "single",
+        options: [
+          { value: "oui", label: "Oui (Activité de para-hôtellerie)" },
+          { value: "non", label: "Non (Hôtellerie classique ou restauration)" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "I",
+    title: "Section I · Restitution du résultat et export",
+    description: "Dernière étape : transmission de votre rapport d'audit personnalisé, exports et options d'accompagnement.",
+    questions: [
+      {
+        number: 66,
+        id: "lead_email",
+        isCore: true,
+        role: "restitution",
+        roleLabel: "Envoi du résultat",
+        title: "Votre adresse électronique professionnelle",
+        subtitle: "Votre comparatif détaillé et le classement argumenté vous seront transmis à cette adresse.",
+        type: "text",
+        inputType: "email",
+        required: true,
+        placeholder: "contact@votre-entreprise.fr"
+      },
+      {
+        number: 67,
+        id: "consent_processing",
+        isCore: true,
+        role: "restitution",
+        roleLabel: "Conformité RGPD",
+        title: "Consentement au traitement des données pour le calcul du comparatif",
+        subtitle: "Base légale : Exécution de la demande d'audit. Vos données sont conservées 12 mois pour le suivi de votre dossier et ne sont jamais revendues sans accord.",
+        type: "consent",
+        required: true,
+        label: "J'accepte que mes données déclarées soient traitées par eFactu dans le but exclusif de générer mon rapport de sélection de Plateformes Agréées."
+      },
+      {
+        number: 68,
+        id: "consent_operator_sharing",
+        isCore: false,
+        role: "restitution",
+        roleLabel: "Conformité RGPD",
+        title: "Mise en relation technique avec les éditeurs retenus (Optionnel)",
+        subtitle: "Case distincte, non pré-cochée.",
+        type: "consent",
+        required: false,
+        label: "J'autorise eFactu à transmettre mes coordonnées techniques aux 3 Plateformes Agréées sélectionnées pour obtenir une proposition tarifaire sans engagement."
+      },
+      {
+        number: 69,
+        id: "export_format_choice",
+        isCore: false,
+        role: "restitution",
+        roleLabel: "Restitution",
+        title: "Format d'export de votre rapport",
+        subtitle: "Téléchargement immédiat disponible dès la validation de votre profil.",
+        type: "single",
+        options: [
+          { value: "pdf", label: "Rapport d'audit imprimable et téléchargeable (PDF)" },
+          { value: "excel", label: "Tableau de scoring et critères comparatifs (Excel / CSV)" },
+          { value: "les_deux", label: "Les deux formats (Dossier complet PDF + Fichier Excel)" }
+        ]
+      },
+      {
+        number: 70,
+        id: "callback_request",
+        isCore: false,
+        role: "information",
+        roleLabel: "Information",
+        title: "Souhait d'être recontacté pour un cadrage technique d'architecture",
+        subtitle: "Échange technique avec un consultant indépendant sur vos flux.",
+        type: "single",
+        options: [
+          { value: "oui", label: "Oui (Être rappelé par un expert pour affiner mon projet)" },
+          { value: "non", label: "Non (Rapport d'audit autonome suffisant)" }
+        ]
       }
     ]
   }
 ];
 
+// Helper to flatten default questions list if needed by admin panel
+export const defaultQuestions = questionnaireSections.flatMap(section => 
+  section.questions.map(q => ({
+    ...q,
+    step: q.number,
+    sectionId: section.id,
+    sectionTitle: section.title
+  }))
+);
+
 export function getQuestions() {
-  return getCachedQuestions();
+  const cached = getCachedQuestions();
+  return (cached && cached.length > 0) ? cached : defaultQuestions;
 }
 
-export function saveQuestions(questionsList) {
-  saveQuestionsDb(questionsList);
+export function saveQuestions(questions) {
+  saveQuestionsDb(questions);
 }
